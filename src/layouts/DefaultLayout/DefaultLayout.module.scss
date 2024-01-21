@@ -1,0 +1,17 @@
+.wrapper {
+  padding: 36px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  display: flex;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+  margin-right: 24px;
+}

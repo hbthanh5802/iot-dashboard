@@ -1,0 +1,107 @@
+.wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-gap: 24px;
+  margin-bottom: 12px;
+}
+
+.card {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--light);
+  border-radius: 5px;
+  padding: 24px 32px;
+  -webkit-box-shadow: 0px 3px 8.3px 0.7px rgba(163, 93, 255, 0.35);
+  box-shadow: var(--primary-box-shadow);
+
+  .card-cirlce {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    height: 100%;
+  }
+}
+
+.card-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-right: 12px;
+
+  .card-header {
+    color: var(--gray);
+    font-weight: 500;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
+  }
+
+  .card-number {
+    position: relative;
+    font-size: 7.2rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
+
+    span {
+      display: inline-block;
+      position: absolute;
+      font-size: 2.4rem;
+      top: 10px;
+      left: calc(100% + 4px);
+    }
+  }
+}
+
+.card-icon {
+  span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  span svg {
+    display: flex;
+    font-size: 2.4rem;
+    width: 80px;
+    height: 100%;
+    filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.25));
+  }
+}
+
+.card {
+  &.normal {
+    * {
+      color: var(--light) !important;
+    }
+
+    background: -webkit-gradient(linear, left top, right top, from(#84d9d2), to(#07cdae)) !important;
+    background: linear-gradient(to right, #84d9d2, #07cdae) !important;
+  }
+
+  &.semi-medium {
+    * {
+      color: var(--light) !important;
+    }
+
+    background: -webkit-gradient(linear, left top, right top, from(#90caf9), color-stop(99%, #047edf)) !important;
+    background: linear-gradient(to right, #90caf9, #047edf 99%) !important;
+  }
+
+  &.medium {
+    * {
+      color: var(--light) !important;
+    }
+
+    background: -webkit-gradient(linear, left top, right top, from(#f6e384), to(#ffd500)) !important;
+    background: linear-gradient(to right, #f6e384, #ffd500) !important;
+  }
+
+  &.high {
+    * {
+      color: var(--light) !important;
+    }
+
+    background: -webkit-gradient(linear, left top, right top, from(#ffbf96), to(#fe7096)) !important;
+    background: linear-gradient(to right, #ffbf96, #fe7096) !important;
+  }
+}

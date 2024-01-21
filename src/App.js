@@ -1,13 +1,10 @@
-// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Layout from '@/components/Layouts';
+import { DefaultLayout } from '@/layouts';
 
 function App() {
   return (
-    // <Router>
     <div className="App">
-      <Layout />
+      <DefaultLayout />
     </div>
-    // </Router>
   );
 }
 

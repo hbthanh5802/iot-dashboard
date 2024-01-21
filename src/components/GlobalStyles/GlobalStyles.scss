@@ -1,6 +1,68 @@
 @import url('normalize.css');
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
+:root {
+  //color
+  --blue: #5e50f9;
+  --indigo: #6610f2;
+  --purple: #6a008a;
+  --pink: #e91e63;
+  --red: #f96868;
+  --orange: #f2a654;
+  --yellow: #f6e84e;
+  --green: #46c35f;
+  --teal: #58d8a3;
+  --cyan: #57c7d4;
+  --white: #ffffff;
+  --gray: #434a54;
+  --gray-light: #aab2bd;
+  --gray-lighter: #e8eff4;
+  --gray-lightest: #e6e9ed;
+  --gray-dark: #0f1531;
+  --black: #000000;
+  --gray-100: #f8f9fa;
+  --gray-200: #e9ecef;
+  --gray-300: #dee2e6;
+  --gray-400: #ced4da;
+  --gray-500: #adb5bd;
+  --gray-600: #6c757d;
+  --gray-700: #495057;
+  --gray-800: #343a40;
+  --gray-900: #212529;
+  --primary: #b66dff;
+  --secondary: #c3bdbd;
+  --success: #1bcfb4;
+  --info: #198ae3;
+  --warning: #fed713;
+  --danger: #fe7c96;
+  --light: #f8f9fa;
+  --dark: #3e4b5b;
+  --primary-rgb: 13, 110, 253;
+  --secondary-rgb: 108, 117, 125;
+  --success-rgb: 25, 135, 84;
+  --info-rgb: 13, 202, 240;
+  --warning-rgb: 255, 193, 7;
+  --danger-rgb: 220, 53, 69;
+  --light-rgb: 248, 249, 250;
+  --dark-rgb: 33, 37, 41;
+  --white-rgb: 255, 255, 255;
+  --black-rgb: 0, 0, 0;
+  --body-color-rgb: 52, 58, 64;
+  --body-bg-rgb: 255, 255, 255;
+  //background-color
+  --bg-primary-gradient: linear-gradient(to right, #da8cff, #9a55ff) !important;
+  //box-shadow
+  --primary-box-shadow: 0 0 35px 0 rgba(154, 161, 171, 0.15);
+  --primary-box-shadow-hover: 0 0 35px 0 rgba(154, 161, 171, 0.4);
+}
+
+*,
+*::before,
+*::after {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
 * {
   padding: 0;
   margin: 0;
@@ -12,8 +74,9 @@ html {
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
+  color: var(--gray-dark);
   font-size: 1.6rem;
+  font-family: 'Poppins', sans-serif;
   background-color: #f5f5f5;
   text-rendering: optimizeSpeed;
 
