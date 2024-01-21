@@ -15,7 +15,9 @@ function Layout() {
       <div className={cx('container')}>
         <div className={cx('content')}>
           <Mainbar />
-          <h3>Content</h3>
+          <div className={cx('chart-wrapper')}>
+            <h1>ABC</h1>
+          </div>
         </div>
         <Sidebar />
       </div>
