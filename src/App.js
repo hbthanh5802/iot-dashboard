@@ -1,7 +1,14 @@
-import './App.css';
+// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Layout from '@/components/Layouts';
 
 function App() {
-  return <div className="App"></div>;
+  return (
+    // <Router>
+    <div className="App">
+      <Layout />
+    </div>
+    // </Router>
+  );
 }
 
 export default App;
