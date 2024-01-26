@@ -50,10 +50,19 @@
   --body-color-rgb: 52, 58, 64;
   --body-bg-rgb: 255, 255, 255;
   //background-color
+  --bg-color: #f2edf3;
   --bg-primary-gradient: linear-gradient(to right, #da8cff, #9a55ff) !important;
   //box-shadow
   --primary-box-shadow: 0 0 35px 0 rgba(154, 161, 171, 0.15);
   --primary-box-shadow-hover: 0 0 35px 0 rgba(154, 161, 171, 0.4);
+  --box-shadow-1: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  --box-shadow-2: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  --box-shadow-3: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+
+  // Dark theme
+  --bg-color-dark: #151419;
+  --bg-primary-gradient-dark: linear-gradient(to right, #da8cff, #9a55ff) !important;
+  --bg-box-dark: #232227;
 }
 
 *,
@@ -81,7 +90,6 @@ body {
   font-size: 1.6rem;
   font-family: 'Poppins', sans-serif;
   text-rendering: optimizeSpeed;
-  background-color: #f2edf3;
 }
 
 // Srollbar

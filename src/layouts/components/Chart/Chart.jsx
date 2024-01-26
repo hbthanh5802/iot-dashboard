@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind';
+import { useContext } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,11 +13,14 @@ import {
 import { Line } from 'react-chartjs-2';
 
 import styles from './Chart.module.scss';
+import { ThemeContext } from '@/contexts/ThemeContext';
+
 const cx = classNames.bind(styles);
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 function Chart() {
+  const { dark } = useContext(ThemeContext);
   const labels = ['10:00:01', '10:00:02', '10:00:03', '10:00:04', '10:00:05'];
   const data = {
     labels,
@@ -55,7 +59,7 @@ function Chart() {
   };
 
   return (
-    <div className={cx('wrapper')}>
+    <div className={cx('wrapper', { dark })}>
       <Line className={cx('chart')} options={options} data={data} />
     </div>
   );

@@ -9,6 +9,7 @@
   background-color: var(--light);
   box-shadow: var(--primary-box-shadow);
   margin-bottom: 24px;
+  transition: all 0.8s ease;
 }
 
 .title {
@@ -37,10 +38,102 @@
   }
 }
 
-.switch-theme {
-  // margin-left: auto;
+.theme-wrapper {
+  margin-left: auto;
 
-  .switch-btn label {
-    height: 30px;
+  .theme-label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+  }
+
+  .theme-input {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .theme-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    z-index: 2;
+  }
+
+  .toggle {
+    position: absolute;
+    display: block;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--gray-100);
+    z-index: 1;
+    transition: all 0.8s ease-in-out;
+    box-shadow: -1px 1px 5px 1px rgba(0, 0, 0, 0.3), 1px -1px 8px 1px rgba(var(--primary-rgb), 0.4),
+      1px 1px 8px 1px rgba(var(--danger-rgb), 0.4);
+  }
+}
+
+.theme-icon {
+  svg {
+    display: flex;
+    height: 20px;
+    width: 20px;
+    filter: drop-shadow(0px 0px 2px rgba(0, 0, 0, 0.5));
+    transition: all 0.8s ease;
+  }
+
+  &.sun-icon svg {
+    height: 24px;
+    width: 24px;
+    transform: rotate(360deg) scale(0);
+    fill: var(--gray-200);
+  }
+
+  &.moon-icon svg {
+    fill: var(--gray-900);
+  }
+}
+
+input.theme-input:checked {
+  ~ .toggle {
+    transform: rotate(360deg);
+    background-color: #2b2b2b;
+  }
+
+  ~ .moon-icon svg {
+    transform: rotate(360deg) scale(0);
+  }
+
+  ~ .sun-icon svg {
+    transform: rotate(0) scale(1);
+    transition-delay: 0.5s;
+  }
+}
+
+// Dark theme
+.wrapper.dark {
+  background-color: var(--bg-box-dark) !important;
+  box-shadow: unset;
+
+  .title {
+    color: var(--gray-lighter) !important;
+  }
+
+  .theme-wrapper {
+    .toggle {
+      box-shadow: -1px 1px 5px 1px rgba(0, 0, 0, 0.6), 3px -1px 8px 1px rgba(var(--warning-rgb), 0.7),
+        1px 1px 8px 1px rgba(var(--danger-rgb), 0.5);
+    }
   }
 }

@@ -3,6 +3,7 @@ import classNames from 'classnames/bind';
 
 import styles from './Mainbar.module.scss';
 import images from '@/assets/images';
+import { ThemeContext } from '@/contexts/ThemeContext';
 // Temperature
 import { FaTemperatureEmpty as TemperatureNormal } from 'react-icons/fa6';
 // import { FaTemperatureHalf as TemperatureMedium } from 'react-icons/fa6';
@@ -13,19 +14,20 @@ import { TbWashTemperature1 as MoistureNormal } from 'react-icons/tb';
 // import { TbWashTemperature6 as MoistureHigh } from 'react-icons/tb';
 // Light
 import { FaCloud as LightNormal } from 'react-icons/fa6';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 // import { MdSunny as LightMedium } from 'react-icons/md';
 // import { IoPartlySunny as LightHigh } from 'react-icons/io5';
 
 const cx = classNames.bind(styles);
 
 function Mainbar() {
+  const { dark } = useContext(ThemeContext);
   const [temperature, setTemperature] = useState(32);
   const [moistrue, setMoisture] = useState(8);
   const [brightness, setBrightness] = useState(109);
 
   return (
-    <div className={cx('wrapper')}>
+    <div className={cx('wrapper', { dark })}>
       <div
         className={cx('card', {
           normal: 0 <= temperature && temperature < 25,

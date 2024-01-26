@@ -4,41 +4,45 @@
   flex: 1;
   border-radius: 5px;
   max-height: 100%;
+  transition: all 0.8s ease;
 }
 
 .device-info {
-  padding: 24px 32px;
+  padding: 24px 0px;
   width: 100%;
   max-height: 50%;
   border-radius: 5px;
-  transition: all 0.2s ease;
   background-color: var(--light);
-  // -webkit-box-shadow: 0px 3px 8.3px 0.7px rgba(163, 93, 255, 0.35);
-  // box-shadow: var(--primary-box-shadow);
+  transition: all 0.8s ease;
   overflow-y: auto;
 
   h3 {
     margin-bottom: 12px;
+    padding: 4px 32px;
+    transition: all 0.8s ease;
   }
 }
 
 .device-desc {
   display: flex;
   align-items: center;
-  padding: 4px 0;
+  padding: 8px 32px;
   font-size: 1.6rem;
 
   strong {
     font-weight: 600;
     color: var(--gray-dark);
+    transition: all 0.8s ease;
   }
 
   p {
     margin-left: 8px;
+    transition: all 0.8s ease;
   }
 
   &:hover {
     background-color: #f2edf3;
+    transition: all 0.8s ease;
   }
 }
 
@@ -50,6 +54,7 @@
   background-color: var(--light);
   padding: 24px 32px;
   flex: 1;
+  transition: all 0.8s ease;
 
   .control {
     display: flex;
@@ -61,6 +66,7 @@
     border: 1px solid var(--gray-300);
     border-radius: 5px;
     position: relative;
+    transition: all 0.8s ease;
   }
 
   .control:not(:first-child) {
@@ -73,6 +79,7 @@
     height: auto;
     margin-bottom: 8px;
     filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.25));
+    transition: all 0.8s ease;
   }
 
   .control-btn {
@@ -84,7 +91,40 @@
 
 span.yellow-light {
   svg {
-    fill: var(--yellow);
+    fill: var(--yellow) !important;
     filter: drop-shadow(0px 0px 10px rgba(242, 166, 84, 0.8)) !important;
+  }
+}
+
+// Dark mode
+.wrapper.dark {
+  .device-info {
+    background-color: var(--bg-box-dark) !important;
+
+    h3,
+    strong {
+      color: var(--gray-lighter) !important;
+    }
+
+    p {
+      color: var(--gray-light) !important;
+    }
+
+    .device-desc:hover {
+      background-color: var(--dark) !important;
+    }
+  }
+
+  .device-controls {
+    background-color: var(--bg-box-dark) !important;
+
+    .control {
+      border-color: var(--dark) !important;
+    }
+
+    .control-icon svg {
+      color: var(--gray-light);
+      transition: all 0.8s ease;
+    }
   }
 }

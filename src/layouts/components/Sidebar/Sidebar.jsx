@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState, useMemo, useRef } from 'react';
 import { useSpring, animated } from '@react-spring/web';
 
 import classNames from 'classnames/bind';
@@ -8,10 +8,12 @@ import SwitchButton from '@/components/SwitchButton';
 import { PiFanFill } from 'react-icons/pi';
 import { HiOutlineLightBulb } from 'react-icons/hi2';
 import { HiLightBulb } from 'react-icons/hi2';
+import { ThemeContext } from '@/contexts/ThemeContext';
 
 const cx = classNames.bind(styles);
 
 function Sidebar() {
+  const { dark } = useContext(ThemeContext);
   const [isFanOn, setIsFanOn] = useState(false);
   const [isLightOn, setIsLightOn] = useState(false);
 
@@ -40,7 +42,7 @@ function Sidebar() {
   }, [isFanOn]);
 
   return (
-    <div className={cx('wrapper')}>
+    <div className={cx('wrapper', { dark })}>
       <div className={cx('device-info')}>
         <h3>Devices</h3>
         <div className={cx('device-desc')}>
