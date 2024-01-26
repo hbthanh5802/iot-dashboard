@@ -1,23 +1,12 @@
 .wrapper {
   padding: 36px;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .container {
   display: flex;
   flex: 1;
-}
-
-.content {
-  display: flex;
-  flex-direction: column;
-  width: 70%;
-  margin-right: 24px;
-}
-
-.chart-wrapper {
-  display: flex;
-  flex: 1;
+  max-height: 90%;
 }

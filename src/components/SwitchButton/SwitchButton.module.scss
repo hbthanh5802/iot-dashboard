@@ -4,8 +4,6 @@
   width: 74px;
   height: var(--height);
   border-radius: 5px;
-  overflow: hidden;
-  border: 1px solid var(--gray-300);
 }
 
 .switch-btn {
@@ -21,6 +19,7 @@
     margin: 0;
     opacity: 0;
     cursor: pointer;
+    border-radius: 5px;
     z-index: 3;
   }
 
@@ -34,6 +33,8 @@
     background-color: #fcebeb;
     transition: 0.3s ease all;
     z-index: 1;
+    border-radius: 5px;
+    border: 1px solid #f44336;
   }
 }
 
@@ -81,5 +82,6 @@ input[type='checkbox'] {
 
   &:checked ~ .layer {
     background-color: #ebf7fc;
+    border: 1px solid #03a9f4;
   }
 }

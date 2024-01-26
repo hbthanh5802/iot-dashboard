@@ -4,9 +4,9 @@ import styles from './SwitchButton.module.scss';
 
 const cx = classNames.bind(styles);
 
-function SwitchButton({ mode, onFanClick }) {
+function SwitchButton({ mode, onClick }) {
   return (
-    <div className={cx('wrapper')} onClick={() => onFanClick(!mode)}>
+    <div className={cx('wrapper')} onClick={() => onClick(!mode)}>
       <div className={cx('switch-btn')}>
         <input type="checkbox" />
         <div className={cx('knobs')}></div>

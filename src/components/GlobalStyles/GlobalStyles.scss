@@ -1,4 +1,4 @@
-@import url('normalize.css');
+@import 'normalize.css';
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 :root {
@@ -71,14 +71,59 @@
 
 html {
   font-size: 62.5%;
+  scroll-behavior: smooth;
+  height: 100%;
 }
 
 body {
+  height: 100%;
   color: var(--gray-dark);
   font-size: 1.6rem;
   font-family: 'Poppins', sans-serif;
-  background-color: #f5f5f5;
   text-rendering: optimizeSpeed;
-
   background-color: #f2edf3;
+}
+
+// Srollbar
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-track:hover,
+::-webkit-scrollbar-track:active {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+a {
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+}
+
+button {
+  cursor: pointer;
 }
