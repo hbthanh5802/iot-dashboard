@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState, useMemo, useRef } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useSpring, animated } from '@react-spring/web';
 
 import classNames from 'classnames/bind';

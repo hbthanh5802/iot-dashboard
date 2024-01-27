@@ -51,6 +51,7 @@
   --body-bg-rgb: 255, 255, 255;
   //background-color
   --bg-color: #f2edf3;
+  --bg-color-rgb: 242, 237, 243;
   --bg-primary-gradient: linear-gradient(to right, #da8cff, #9a55ff) !important;
   //box-shadow
   --primary-box-shadow: 0 0 35px 0 rgba(154, 161, 171, 0.15);
@@ -60,6 +61,7 @@
   --box-shadow-3: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 
   // Dark theme
+  --bg-color-dark-rgb: 21, 20, 25;
   --bg-color-dark: #151419;
   --bg-primary-gradient-dark: linear-gradient(to right, #da8cff, #9a55ff) !important;
   --bg-box-dark: #232227;
