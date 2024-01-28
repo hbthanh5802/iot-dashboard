@@ -14,17 +14,21 @@ app.use(express.json());
 const useRoutes = require('./routes/index');
 useRoutes(app);
 
-// Đồng bộ hóa mô hình với cơ sở dữ liệu
+// Sync the models with database
 const PORT = process.env.PORT || 4005;
 const sequelize = require('./configs/database');
-const TestModel = require('./models/Test.model');
-const OtherModel = require('./models/Other.model');
+const SensorModel = require('./models/Sensor.model');
+const DataSensor = require('./models/DataSensor.model');
+const DeviceModel = require('./models/Device.model');
+const DataActionModel = require('./models/DataAction.model');
 
-TestModel.hasOne(OtherModel);
-OtherModel.belongsTo(TestModel);
+SensorModel.hasMany(DataSensor);
+DataSensor.belongsTo(SensorModel);
+DeviceModel.hasMany(DataActionModel);
+DataActionModel.belongsTo(DeviceModel);
 
 sequelize
-  .sync({ force: true })
+  .sync({ force: false })
   .then(() => {
     console.log('Database synchronized.');
     app.listen(PORT, () => {
