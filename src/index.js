@@ -8,7 +8,7 @@ dotenv.config();
 const app = express();
 app.use(morgan('tiny'));
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.json());
+app.use(bodyParser.json());
 
 // Routes
 const useRoutes = require('./routes/index');
