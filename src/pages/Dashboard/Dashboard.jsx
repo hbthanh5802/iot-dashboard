@@ -1,7 +1,8 @@
 import classNames from 'classnames/bind';
 
 import styles from './Dashboard.module.scss';
-import Mainbar from '@/layouts/components/Mainbar';
+
+import WidgetBar from '@/layouts/components/WidgetBar';
 import Sidebar from '@/layouts/components/Sidebar';
 import Chart from '@/layouts/components/Chart';
 
@@ -11,7 +12,7 @@ function Dashboard() {
   return (
     <div className={cx('wrapper')}>
       <div className={cx('content')}>
-        <Mainbar />
+        <WidgetBar />
         <Chart />
       </div>
       <Sidebar />

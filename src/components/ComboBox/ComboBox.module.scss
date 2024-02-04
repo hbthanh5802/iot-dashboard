@@ -1,0 +1,48 @@
+.wrapper {
+  position: relative;
+
+  .input {
+    padding: 12px 8px;
+    border-radius: 5px;
+    border: 1px solid var(--gray-600);
+    background-color: var(--light);
+    outline: none;
+    transition: all 0.3s ease;
+  }
+
+  .input:hover,
+  .input:focus {
+    border: 1px solid var(--primary);
+    background-color: var(--white);
+  }
+}
+
+.menu-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-radius: 5px;
+  background-color: var(--light);
+
+  .not-match {
+    padding: 8px 12px;
+  }
+}
+
+.menu-item {
+  width: 100%;
+  padding: 8px 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  color: var(--gray-600);
+
+  &:hover {
+    color: var(--gray-900);
+    background-color: var(--bg-color);
+  }
+
+  p {
+    word-break: break-all;
+    white-space: normal;
+  }
+}

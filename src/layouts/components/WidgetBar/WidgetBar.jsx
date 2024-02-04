@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-computed-key */
 import classNames from 'classnames/bind';
 
-import styles from './Mainbar.module.scss';
+import styles from './WidgetBar.module.scss';
 import images from '@/assets/images';
 import { ThemeContext } from '@/contexts/ThemeContext';
 // Temperature
@@ -20,10 +20,10 @@ import { useContext, useState } from 'react';
 
 const cx = classNames.bind(styles);
 
-function Mainbar() {
+function WidgetBar() {
   const { dark } = useContext(ThemeContext);
   const [temperature, setTemperature] = useState(32);
-  const [moistrue, setMoisture] = useState(8);
+  const [moisture, setMoisture] = useState(8);
   const [brightness, setBrightness] = useState(109);
 
   return (
@@ -36,9 +36,9 @@ function Mainbar() {
           high: 75 <= temperature,
         })}
       >
-        <img className={cx('card-cirlce')} src={images.circleSvg} alt="circle" />
+        <img className={cx('card-circle')} src={images.circleSvg} alt="circle" />
         <div className={cx('card-info')}>
-          <h3 className={cx('card-header')}>Tempurature</h3>
+          <h3 className={cx('card-header')}>Temperature</h3>
           <p className={cx('card-number')}>
             {temperature}
             <span>°C</span>
@@ -52,17 +52,17 @@ function Mainbar() {
       </div>
       <div
         className={cx('card', {
-          normal: 0 <= moistrue && moistrue < 25,
-          ['semi-medium']: 25 <= moistrue && moistrue < 50,
-          medium: 50 <= moistrue && moistrue < 75,
-          high: 75 <= moistrue,
+          normal: 0 <= moisture && moisture < 25,
+          ['semi-medium']: 25 <= moisture && moisture < 50,
+          medium: 50 <= moisture && moisture < 75,
+          high: 75 <= moisture,
         })}
       >
-        <img className={cx('card-cirlce')} src={images.circleSvg} alt="circle" />
+        <img className={cx('card-circle')} src={images.circleSvg} alt="circle" />
         <div className={cx('card-info')}>
           <h3 className={cx('card-header')}>Moisture</h3>
           <p className={cx('card-number')}>
-            {moistrue}
+            {moisture}
             <span>%</span>
           </p>
         </div>
@@ -80,7 +80,7 @@ function Mainbar() {
           high: 75 <= brightness,
         })}
       >
-        <img className={cx('card-cirlce')} src={images.circleSvg} alt="circle" />
+        <img className={cx('card-circle')} src={images.circleSvg} alt="circle" />
         <div className={cx('card-info')}>
           <h3 className={cx('card-header')}>Brightness</h3>
           <p className={cx('card-number')}>
@@ -98,4 +98,4 @@ function Mainbar() {
   );
 }
 
-export default Mainbar;
+export default WidgetBar;

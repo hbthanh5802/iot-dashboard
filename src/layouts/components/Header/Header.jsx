@@ -30,7 +30,14 @@ function Header() {
       </nav>
       <div className={cx('theme-wrapper')}>
         <label htmlFor={themeId} className={cx('theme-label')}>
-          <input type="checkbox" name="theme" id={themeId} className={cx('theme-input')} onChange={handleToggleDark} />
+          <input
+            type="checkbox"
+            name="theme"
+            id={themeId}
+            className={cx('theme-input')}
+            onChange={handleToggleDark}
+            checked={dark}
+          />
           <span className={cx('theme-icon', 'moon-icon')}>
             <FaMoon />
           </span>
