@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import classNames from 'classnames/bind';
 
-import styles from './SensorsHistory.module.scss';
+import styles from './ActionHistory.module.scss';
 import CustomTable from '@/components/CustomTable';
 
 const cx = classNames.bind(styles);
@@ -97,7 +97,7 @@ function SensorsHistory() {
 
   return (
     <div className={cx('wrapper')}>
-      <CustomTable ref={tableRef} title={'Sensors'} data={randomData} columns={columns} />
+      <CustomTable ref={tableRef} title={'Actions'} data={randomData} columns={columns} />
     </div>
   );
 }

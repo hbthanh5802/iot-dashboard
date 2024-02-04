@@ -68,7 +68,7 @@
     &.active {
       color: var(--purple);
       background-color: var(--bg-color);
-      border: 1px solid var(--primary);
+      border: 1px solid rgba(var(--primary-rgb), 0.1);
     }
   }
 }
@@ -116,7 +116,7 @@
     z-index: 1;
     transition: all 0.8s ease-in-out;
     box-shadow: -1px 1px 5px 1px rgba(0, 0, 0, 0.3), 1px -1px 8px 1px rgba(var(--primary-rgb), 0.4),
-      1px 1px 8px 1px rgba(var(--danger-rgb), 0.4);
+      1px 1px 8px 1px rgba(var(--danger-rgb), 0.4), -3px -3px 8px 1px rgba(var(--info-rgb), 0.4);
   }
 }
 
@@ -133,7 +133,7 @@
     height: 22px;
     width: 22px;
     transform: rotate(360deg) scale(0);
-    fill: var(--gray-200);
+    fill: var(--gray-400);
   }
 
   &.moon-icon svg {
@@ -185,7 +185,7 @@ input.theme-input:checked {
       &.active {
         color: var(--primary) !important;
         background-color: var(--bg-color-dark) !important;
-        border: 1px solid rgba(var(--primary-rgb), 0.5) !important;
+        border: 1px solid rgba(var(--primary-rgb), 0.3) !important;
       }
     }
   }

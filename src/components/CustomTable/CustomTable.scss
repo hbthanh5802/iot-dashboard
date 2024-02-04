@@ -1,0 +1,59 @@
+.ctTable-wrapper {
+  flex: 1;
+  width: 100%;
+  max-height: 100%;
+
+  .ctTable-table {
+    width: 100%;
+    // height: 100%;
+    border-radius: 5px;
+    box-shadow: var(--primary-box-shadow);
+    background-color: var(--light);
+    max-height: 100%;
+  }
+}
+
+.ctTable-table {
+  .ant-table-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #597ef7;
+    transition: all 0.5s ease;
+  }
+
+  .ctTable-header {
+    color: var(--light);
+    font-size: 2.4rem;
+    font-weight: 600;
+  }
+}
+
+// Dark mode
+.ctTable-wrapper.dark {
+  .ant-table-title {
+    background-color: var(--bg-box-dark);
+  }
+
+  .ctTable-header {
+    color: var(--gray-lightest);
+  }
+
+  .ant-select-dropdown {
+    background-color: var(--bg-box-dark);
+  }
+  .ctTable-table {
+    background-color: var(--bg-box-dark);
+    box-shadow: var(--bg-primary-gradient-dark);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+.ant-dropdown-menu {
+  &:empty:after {
+    color: var(--gray-light) !important;
+  }
+}

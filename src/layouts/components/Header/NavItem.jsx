@@ -5,13 +5,14 @@ import styles from './Header.module.scss';
 
 const cx = classNames.bind(styles);
 
-function NavItem({ className, title, to }) {
+function NavItem({ className, title, to, handleClick, isActive }) {
   return (
     <NavLink
+      onClick={handleClick}
       className={(props) =>
         cx({
           [className]: className,
-          active: props.isActive,
+          active: props.isActive || isActive,
         })
       }
       to={to}
