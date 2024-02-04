@@ -1,0 +1,18 @@
+.wrapper {
+  flex: 1;
+
+  .table {
+    width: 100%;
+    border-radius: 5px;
+    box-shadow: var(--primary-box-shadow);
+    background-color: var(--light);
+  }
+}
+
+// Dark mode
+.wrapper.dark {
+  .table {
+    background-color: var(--bg-box-dark);
+    box-shadow: var(--bg-primary-gradient-dark);
+  }
+}

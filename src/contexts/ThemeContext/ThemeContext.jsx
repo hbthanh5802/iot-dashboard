@@ -15,7 +15,6 @@ function ThemeProvider({ children }) {
   useLayoutEffect(() => {
     const savedTheme = localStorage.getItem(DARK_THEME) === 'true' ? true : false;
     if (savedTheme !== undefined) {
-      console.log(savedTheme);
       setDark(savedTheme);
     }
   }, []);
