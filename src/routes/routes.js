@@ -3,7 +3,7 @@ import SensorsHistory from '@/pages/SensorsHistory';
 import ActionHistory from '@/pages/ActionHistory';
 import Profile from '@/pages/Profile';
 
-const routes = [
+export const publicRoutes = [
   {
     path: '/',
     component: Dashboard,
@@ -22,4 +22,6 @@ const routes = [
   },
 ];
 
-export default routes;
+export const privateRoutes = [];
+
+// export default { publicRoutes, privateRoutes };

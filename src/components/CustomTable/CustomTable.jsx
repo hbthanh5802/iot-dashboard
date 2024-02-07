@@ -1,8 +1,13 @@
-import { useContext, forwardRef, useState } from 'react';
+import { useContext, useState, useEffect, useMemo } from 'react';
 import classNames from 'classnames';
-import { ConfigProvider, Table, Checkbox } from 'antd';
+import { ConfigProvider, Table, Checkbox, Dropdown, Space } from 'antd';
+import { downloadExcel } from 'react-export-table-to-excel';
+import { CSVLink } from 'react-csv';
 
+import * as time from '@/utils/time';
 import { ThemeContext } from '@/contexts/ThemeContext';
+import { RiFileExcel2Fill } from 'react-icons/ri';
+import { FaFileCsv } from 'react-icons/fa';
 import './CustomTable.scss';
 
 const lightTheme = {
@@ -28,6 +33,8 @@ const darkTheme = {
   components: {
     Table: {
       rowHoverBg: 'rgba(110, 17, 217, 0.1)',
+      rowSelectedBg: 'rgba(110, 17, 217, 0.2)',
+      rowSelectedHoverBg: 'rgba(110, 17, 217, 0.3)',
       headerBg: '#232227',
       bodySortBg: 'rgba(110, 17, 217, 0.1)',
       headerSortHoverBg: 'rgba(110, 17, 217, 0.1)',
@@ -74,69 +81,175 @@ const darkTheme = {
   },
 };
 
-function CustomTable({ data, columns, title }, ref) {
+function CustomTable({ data, columns, title }) {
   const { dark } = useContext(ThemeContext);
-  const [checkedColumnList, setCheckedColumnList] = useState(function () {
+  const [paginationPageSize, setPaginationPageSize] = useState(10);
+  const [selectedData, setSelectedData] = useState(data);
+  const [checkedColumnList, setCheckedColumnList] = useState(() => {
     return columns.map((item) => item.key);
   });
+  // Contain title of header and data of body
+  const [tableData, setTableData] = useState({
+    header: columns,
+    body: data,
+  });
 
-  const options = columns.map(({ key, title }) => ({
-    label: title,
-    value: key,
-  }));
+  const checkColumnOptions = useMemo(() => {
+    return columns.map((column) => ({
+      label: column.title,
+      value: column.key,
+    }));
+  }, [columns]);
 
-  const filteredColumns = columns.map((item) => ({
-    ...item,
-    hidden: !checkedColumnList.includes(item.key),
-  }));
+  const filteredColumns = useMemo(() => {
+    return columns.map((item) => ({
+      ...item,
+      hidden: !checkedColumnList.includes(item.key),
+    }));
+  }, [checkedColumnList, columns]);
 
-  const renderCheckColumnList = () => {
+  const downloadItems = [
+    {
+      key: 'csv',
+      label: (
+        <CSVLink
+          headers={tableData.header}
+          data={tableData.body}
+          filename={`${title} History - created at ${time.getCurrentDateTimeInVietnam()}`}
+          target="_blank"
+        >
+          Export to .CSV
+        </CSVLink>
+      ),
+      icon: <FaFileCsv className={'download-icon'} />,
+    },
+    {
+      key: 'xlsx',
+      label: 'Export to .XLSX',
+      icon: <RiFileExcel2Fill className={'download-icon'} />,
+      onClick: handleExportData,
+    },
+  ];
+
+  const rowSelection = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+      setSelectedData(selectedRows.length > 0 ? selectedRows : data);
+    },
+    getCheckboxProps: (record) => ({
+      name: record.id,
+    }),
+  };
+
+  function handleExportData({ key }) {
+    const { header, body } = tableData;
+    switch (key) {
+      case 'xlsx':
+        downloadExcel({
+          fileName: `${title} - created at ${time.getCurrentDateTimeInVietnam()}`,
+          sheet: `${title} - created at ${time.getCurrentDateTimeInVietnam()}`,
+          tablePayload: {
+            header,
+            body,
+          },
+        });
+        break;
+      default:
+        break;
+    }
+  }
+
+  const renderTableFooter = () => {
     return (
-      <Checkbox.Group
-        value={checkedColumnList}
-        options={options}
-        onChange={(value) => {
-          setCheckedColumnList(value);
-        }}
-      />
+      <div className={'ctTale-footer'}>
+        <Checkbox.Group
+          value={checkedColumnList}
+          options={checkColumnOptions}
+          onChange={(value) => {
+            console.log(value);
+            setCheckedColumnList(value);
+          }}
+        />
+        <Space>
+          <Dropdown.Button
+            type="primary"
+            placement="topRight"
+            menu={{ items: downloadItems }}
+            overlayClassName={`ctTable-dropdown-menu ${dark && 'dark'}`}
+          >
+            Export Data
+          </Dropdown.Button>
+        </Space>
+      </div>
     );
   };
+
+  useEffect(() => {
+    const header = ['STT'].concat(
+      filteredColumns
+        .map((column) => column.title)
+        .filter((item) => {
+          const lowerCaseStr = item.toLowerCase().split(' ').join('');
+          return (
+            lowerCaseStr !== 'id' && checkedColumnList.some((checkedItem) => checkedItem.toLowerCase() === lowerCaseStr)
+          );
+        }),
+    );
+    const body = selectedData.map(({ id, ...fields }) => {
+      let row = [id];
+      Object.entries(fields).forEach(([key, value]) => {
+        if (checkedColumnList.includes(key)) row.push(value);
+      });
+      return row;
+    });
+    setTableData({ header, body });
+  }, [filteredColumns, selectedData, checkedColumnList]);
 
   return (
     <div className={classNames('ctTable-wrapper', { dark })}>
       <ConfigProvider
         // theme={{
         //   components: {
-        //     Dropdown: {
-        //       colorPrimaryText: 'red',
+        //     Table: {
+        //       rowSelectedBg: 'rgba(110, 17, 217, 0.2)',
+        //       rowSelectedHoverBg: 'rgba(110, 17, 217, 0.3)',
         //     },
         //   },
         // }}
         theme={dark ? darkTheme : lightTheme}
       >
         <Table
-          ref={ref}
           style={{
             width: '100%',
           }}
           className={classNames('ctTable-table')}
-          dataSource={data}
           columns={filteredColumns}
+          dataSource={data}
           bordered
           size="middle"
           title={() => <p className={classNames('ctTable-header')}>{title}</p>}
-          footer={renderCheckColumnList}
+          footer={renderTableFooter}
+          rowSelection={{
+            type: 'checkbox',
+            ...rowSelection,
+          }}
           pagination={{
             position: ['bottomCenter'],
-            pageSize: 10,
-            total: 100,
+            pageSize: paginationPageSize,
+            total: data.length,
             showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
           }}
           scroll={{
-            y: 200,
+            y: 500,
           }}
           onChange={(pagination, filters, sorter, extra) => {
-            console.log('params', pagination, filters, sorter, extra);
+            // console.group();
+            // console.log('pagination', pagination);
+            console.log('filters', filters);
+            // console.log('sorter', sorter);
+            // console.log('extra', extra);
+            // console.groupEnd();
+            setPaginationPageSize(pagination.pageSize);
           }}
         />
       </ConfigProvider>
@@ -144,4 +257,4 @@ function CustomTable({ data, columns, title }, ref) {
   );
 }
 
-export default forwardRef(CustomTable);
+export default CustomTable;

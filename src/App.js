@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { DefaultLayout } from '@/layouts';
-import routes from '@/routes';
+import { publicRoutes } from '@/routes';
 
 function App() {
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
@@ -27,7 +27,7 @@ function App() {
         }}
       >
         <Routes>
-          {routes.map((route, index) => {
+          {publicRoutes.map((route, index) => {
             let Layout = DefaultLayout;
             if (route.layout) {
               Layout = route.layout;

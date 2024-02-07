@@ -1,1 +1,3 @@
-export { default } from './routes';
+export { publicRoutes, privateRoutes } from './routes';
+
+// console.log(routes);
