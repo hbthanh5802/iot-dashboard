@@ -9,6 +9,7 @@ import { ThemeContext } from '@/contexts/ThemeContext';
 import { RiFileExcel2Fill } from 'react-icons/ri';
 import { FaFileCsv } from 'react-icons/fa';
 import './CustomTable.scss';
+import moment from 'moment';
 
 const lightTheme = {
   token: {
@@ -56,9 +57,10 @@ const darkTheme = {
       colorText: 'var(--primary) !important',
     },
     Input: {
-      colorBgContainer: 'var(--gray-light)',
-      colorBorder: 'var(--gray)',
-      colorText: '#000',
+      colorBgContainer: 'var(--gray)',
+      colorBorder: 'var(--gray-light)',
+      colorText: 'var(--gray-lightest)',
+      colorTextPlaceholder: 'var(--gray-light)',
     },
     Dropdown: {
       controlItemBgActive: 'var(--gray-800)',
@@ -77,6 +79,20 @@ const darkTheme = {
       selectorBg: 'var(--gray)',
       optionSelectedBg: 'var(--gray)',
       controlItemBgHover: 'var(--gray-500)',
+    },
+    DatePicker: {
+      colorBgContainer: 'var(--gray)',
+      colorText: 'var(--gray-lighter)',
+      colorTextPlaceholder: 'var(--gray-lighter)',
+      colorIcon: 'var(--gray-lighter)',
+      colorIconHover: 'var(--primary)',
+      activeBg: 'rgba(110, 17, 217, 0.1)',
+      cellActiveWithRangeBg: 'rgba(110, 17, 217, 0.2)',
+      controlItemBgActive: 'red',
+      colorBgElevated: 'var(--gray-800)',
+      colorTextHeading: 'var(--gray-lightest)',
+      colorSplit: 'var(--gray-600)',
+      colorTextDisabled: 'var(--gray-500)',
     },
   },
 };
@@ -198,7 +214,10 @@ function CustomTable({ data, columns, title }) {
     const body = selectedData.map(({ id, ...fields }) => {
       let row = [id];
       Object.entries(fields).forEach(([key, value]) => {
-        if (checkedColumnList.includes(key)) row.push(value);
+        if (checkedColumnList.includes(key)) {
+          if (moment.isMoment(value)) row.push(time.formatToCustomFormat(value));
+          else row.push(value);
+        }
       });
       return row;
     });
@@ -209,10 +228,28 @@ function CustomTable({ data, columns, title }) {
     <div className={classNames('ctTable-wrapper', { dark })}>
       <ConfigProvider
         // theme={{
+        //   token: {
+        //     colorPrimary: '#9254de',
+        //   },
         //   components: {
         //     Table: {
+        //       rowHoverBg: 'rgba(110, 17, 217, 0.1)',
         //       rowSelectedBg: 'rgba(110, 17, 217, 0.2)',
         //       rowSelectedHoverBg: 'rgba(110, 17, 217, 0.3)',
+        //       headerBg: '#232227',
+        //       bodySortBg: 'rgba(110, 17, 217, 0.1)',
+        //       headerSortHoverBg: 'rgba(110, 17, 217, 0.1)',
+        //       headerSortActiveBg: 'rgba(110, 17, 217, 0.2)',
+        //       colorBgContainer: '#232227',
+        //       borderColor: 'rgba(var(--secondary-rgb), 0.6)',
+        //       colorText: 'var(--gray-400)',
+        //       colorTextHeading: 'var(--gray-300)',
+        //       headerFilterHoverBg: 'var(--gray)',
+        //       headerSplitColor: 'var(--gray)',
+        //       colorIcon: '#adb5bd',
+        //       filterDropdownBg: 'var(--gray)',
+        //       filterDropdownMenuBg: 'var(--gray)',
+        //       footerBg: 'var(--bg-box-dark)',
         //     },
         //   },
         // }}
@@ -245,7 +282,7 @@ function CustomTable({ data, columns, title }) {
           onChange={(pagination, filters, sorter, extra) => {
             // console.group();
             // console.log('pagination', pagination);
-            console.log('filters', filters);
+            // console.log('filters', filters);
             // console.log('sorter', sorter);
             // console.log('extra', extra);
             // console.groupEnd();

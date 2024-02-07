@@ -6,6 +6,7 @@ import styles from './SensorsHistory.module.scss';
 import CustomTable from '@/components/CustomTable';
 import { DatePicker, Button, Space } from 'antd';
 import * as time from '@/utils/time';
+import { FaFilter } from 'react-icons/fa';
 
 const cx = classNames.bind(styles);
 
@@ -13,7 +14,7 @@ const startDate = new Date('2024-02-01');
 const endDate = new Date();
 
 const randomData = [];
-for (let i = 1; i <= 10; i++) {
+for (let i = 1; i <= 100; i++) {
   randomData.push({
     key: `${i}`,
     id: `${i}`,
@@ -53,6 +54,7 @@ function SensorsHistory() {
         },
       ],
       onFilter: (value, record) => record.id === value,
+      filterIcon: <FaFilter />,
       filterSearch: true,
       width: '100px',
     },
@@ -88,6 +90,7 @@ function SensorsHistory() {
             }}
           >
             <DatePicker.RangePicker
+              color="primary"
               value={selectedStartDate ? [selectedStartDate, selectedEndDate] : []}
               onChange={(dates, dateStrings) => {
                 setSelectedKeys(dates);
@@ -96,7 +99,7 @@ function SensorsHistory() {
               }}
               onPressEnter={() => handleSearch(selectedKeys, confirm)}
               // needConfirm
-              placeholder={['', 'Till Now']}
+              placeholder={['Start Date', 'Till Now']}
               allowEmpty={[false, true]}
               placement="bottomRight"
               style={{
@@ -126,6 +129,7 @@ function SensorsHistory() {
         }
         return true;
       },
+      filterIcon: <FaFilter />,
       render: (value) => {
         return `${time.formatToCustomFormat(value, 'dddd, DD/MM/yyyy HH:mm:ss')}`;
       },
@@ -145,6 +149,7 @@ function SensorsHistory() {
         },
       ],
       onFilter: (value, record) => record.sensorId === value,
+      filterIcon: <FaFilter />,
       filterSearch: true,
     },
   ];

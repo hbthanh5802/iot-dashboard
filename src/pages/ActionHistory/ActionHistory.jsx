@@ -6,6 +6,7 @@ import styles from './ActionHistory.module.scss';
 import CustomTable from '@/components/CustomTable';
 import { DatePicker, Button, Space } from 'antd';
 import * as time from '@/utils/time';
+import { FaFilter } from 'react-icons/fa';
 
 const cx = classNames.bind(styles);
 
@@ -20,7 +21,7 @@ for (let i = 1; i <= 100; i++) {
     temperature: Math.floor(Math.random() * 100 + 1),
     moisture: Math.floor(Math.random() * 100 + 1),
     brightness: Math.floor(Math.random() * 100 + 1),
-    createdAt: time.getRandomDate(startDate, endDate).toLocaleString(),
+    createdAt: time.getRandomDate(startDate, endDate),
     sensorId: Math.floor(Math.random() * 4 + 1),
   });
 }
@@ -53,6 +54,7 @@ function SensorsHistory() {
         },
       ],
       onFilter: (value, record) => record.id === value,
+      filterIcon: <FaFilter />,
       filterSearch: true,
       width: '100px',
     },
@@ -96,7 +98,7 @@ function SensorsHistory() {
               }}
               onPressEnter={() => handleSearch(selectedKeys, confirm)}
               // needConfirm
-              placeholder={['', 'Till Now']}
+              placeholder={['Start Date', 'Till Now']}
               allowEmpty={[false, true]}
               placement="bottomRight"
               style={{
@@ -126,6 +128,7 @@ function SensorsHistory() {
         }
         return true;
       },
+      filterIcon: <FaFilter />,
       render: (value) => {
         return `${time.formatToCustomFormat(value, 'dddd, DD/MM/yyyy HH:mm:ss')}`;
       },
@@ -145,6 +148,7 @@ function SensorsHistory() {
         },
       ],
       onFilter: (value, record) => record.sensorId === value,
+      filterIcon: <FaFilter />,
       filterSearch: true,
     },
   ];

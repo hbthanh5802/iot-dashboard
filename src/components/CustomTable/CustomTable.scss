@@ -66,7 +66,7 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: var(--gray-700) !important;
   }
 }
 
@@ -137,5 +137,16 @@
     .ant-dropdown-menu-title-content {
       color: rgba(var(--primary-rgb), 1) !important;
     }
+  }
+}
+
+.ant-table-filter-dropdown {
+  .ant-btn-text,
+  .ant-btn-link {
+    color: var(--gray-light) !important;
+  }
+
+  .anticon-search {
+    color: var(--gray-600) !important;
   }
 }
