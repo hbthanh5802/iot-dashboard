@@ -14,6 +14,9 @@ function useRoutes(app) {
 
   // Config to the main route with prefix '/api'
   app.use('/api', apiRouter);
+  app.use('*', (req, res) => {
+    res.status(404).send('This is the main route');
+  });
 }
 
 module.exports = useRoutes;

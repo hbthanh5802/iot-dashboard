@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
+const mqttClient = require('./utils/mqttClient');
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ const DataSensor = require('./models/DataSensor.model');
 const DeviceModel = require('./models/Device.model');
 const DataActionModel = require('./models/DataAction.model');
 
+// Define the relationships
 SensorModel.hasMany(DataSensor);
 DataSensor.belongsTo(SensorModel);
 DeviceModel.hasMany(DataActionModel);
