@@ -1,14 +1,23 @@
 import classNames from 'classnames/bind';
-import { useContext } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 
 import styles from './DefaultLayout.module.scss';
 import Header from '@/layouts/components/Header';
 import { ThemeContext } from '@/contexts/ThemeContext';
+import { useLocation } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
 function DefaultLayout({ children }) {
   const { dark } = useContext(ThemeContext);
+  const layoutRef = useRef(null);
+  const location = useLocation().pathname;
+
+  useEffect(() => {
+    if (layoutRef.current) {
+      console.log(layoutRef.current.clientHeight);
+    }
+  });
 
   return (
     <div
@@ -17,7 +26,14 @@ function DefaultLayout({ children }) {
       })}
     >
       <Header />
-      <div className={cx('container')}>{children}</div>
+      <div
+        ref={layoutRef}
+        className={cx('container', {
+          noHeight: location === '/profile',
+        })}
+      >
+        {children}
+      </div>
     </div>
   );
 }

@@ -131,7 +131,7 @@ function CustomTable({ data, columns, title }) {
         <CSVLink
           headers={tableData.header}
           data={tableData.body}
-          filename={`${title} History - created at ${time.getCurrentDateTimeInVietnam()}`}
+          filename={`${title} - created at ${time.getCurrentDateTimeInVietnam()}`}
           target="_blank"
         >
           Export to .CSV
@@ -147,9 +147,9 @@ function CustomTable({ data, columns, title }) {
     },
   ];
 
+  // Checkbox selection
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
       setSelectedData(selectedRows.length > 0 ? selectedRows : data);
     },
     getCheckboxProps: (record) => ({

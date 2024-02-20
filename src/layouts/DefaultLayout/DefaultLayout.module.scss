@@ -15,4 +15,8 @@
   display: flex;
   flex: 1;
   max-height: 90%;
+
+  &.noHeight {
+    max-height: unset;
+  }
 }

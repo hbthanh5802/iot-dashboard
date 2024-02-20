@@ -5,6 +5,8 @@ import { publicRoutes } from '@/routes';
 
 function App() {
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+  // const location = window.location.pathname;
+  // console.log(location);
 
   useEffect(() => {
     const handleWindowSizeChange = () => {

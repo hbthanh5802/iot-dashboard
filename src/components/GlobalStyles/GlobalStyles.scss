@@ -66,6 +66,19 @@
   --bg-color-dark: #151419;
   --bg-primary-gradient-dark: linear-gradient(to right, #da8cff, #9a55ff) !important;
   --bg-box-dark: #232227;
+
+  --black-primary: #161513;
+  --black-secondary: #000;
+  --white-primary: #f0f2f5;
+  --white-secondary: #fff;
+  --white-threeth: #bdbdbd;
+  --color-1: #08aeea;
+  --color-1-rgb: 8, 174, 234;
+  --color-2: #2af598;
+  --color-2-rgb: 42, 245, 152;
+  --gradient_rt: linear-gradient(to right top, #08aeea, #00c4f0, #00d7e3, #00e8c4, #2af598);
+  --gradient_rb: linear-gradient(to right bottom, #08aeea, #00c4f0, #00d7e3, #00e8c4, #2af598);
+  --gradient_r: linear-gradient(to right, #08aeea, #00c4f0, #00d7e3, #00e8c4, #2af598);
 }
 
 *,
@@ -79,6 +92,7 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  scroll-behavior: smooth;
 }
 
 html {

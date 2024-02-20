@@ -7,6 +7,7 @@ import CustomTable from '@/components/CustomTable';
 import { DatePicker, Button, Space } from 'antd';
 import * as time from '@/utils/time';
 import { FaFilter } from 'react-icons/fa';
+import { IoSearch } from 'react-icons/io5';
 
 const cx = classNames.bind(styles);
 
@@ -43,18 +44,14 @@ function SensorsHistory() {
       key: 'id',
       title: 'ID',
       dataIndex: 'id',
-      filters: [
-        {
-          text: '1',
-          value: '1',
-        },
-        {
-          text: '2',
-          value: '2',
-        },
-      ],
+      filters: randomData.map((item) => {
+        return {
+          text: item.id,
+          value: item.id,
+        };
+      }),
       onFilter: (value, record) => record.id === value,
-      filterIcon: <FaFilter />,
+      filterIcon: <IoSearch />,
       filterSearch: true,
       width: '100px',
     },
