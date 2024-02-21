@@ -9,6 +9,7 @@ import { PiFanFill } from 'react-icons/pi';
 import { HiOutlineLightBulb } from 'react-icons/hi2';
 import { HiLightBulb } from 'react-icons/hi2';
 import { ThemeContext } from '@/contexts/ThemeContext';
+import * as deviceService from '@/services/deviceServices';
 
 const cx = classNames.bind(styles);
 
@@ -18,11 +19,30 @@ function Sidebar() {
   const [isLightOn, setIsLightOn] = useState(false);
 
   const handleFanClick = useCallback((mode) => {
-    setIsFanOn(mode);
+    // async function updateDevice() {
+    //   await deviceService.updateDevice('/device/1', {
+    //     deviceId: 1,
+    //     action: mode,
+    //   });
+    //   setIsFanOn(mode);
+    // }
+    // updateDevice();
+    deviceService
+      .updateDevice('/device/1', {
+        deviceId: 1,
+        action: mode,
+      })
+      .then(() => {
+        setIsFanOn(mode);
+      });
   }, []);
 
   const handleLightClick = useCallback((mode) => {
     setIsLightOn(mode);
+    deviceService.updateDevice('/device/2', {
+      deviceId: 2,
+      action: mode,
+    });
   }, []);
 
   const [spin, spinApi] = useSpring(() => ({

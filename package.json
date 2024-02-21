@@ -34,6 +34,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@tippyjs/react": "^4.2.6",
     "antd": "^5.14.0",
+    "axios": "^1.6.7",
     "chart.js": "^4.4.1",
     "classnames": "^2.5.1",
     "clsx": "^2.1.0",

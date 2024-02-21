@@ -13,12 +13,6 @@ function DefaultLayout({ children }) {
   const layoutRef = useRef(null);
   const location = useLocation().pathname;
 
-  useEffect(() => {
-    if (layoutRef.current) {
-      console.log(layoutRef.current.clientHeight);
-    }
-  });
-
   return (
     <div
       className={cx('wrapper', {
