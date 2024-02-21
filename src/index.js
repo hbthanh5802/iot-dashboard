@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
+const cors = require('cors');
 const mqttClient = require('./utils/mqttClient');
 
 dotenv.config();
@@ -10,6 +11,7 @@ const app = express();
 app.use(morgan('tiny'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cors());
 
 // Routes
 const useRoutes = require('./routes/index');

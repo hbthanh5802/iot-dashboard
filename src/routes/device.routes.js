@@ -5,6 +5,8 @@ const deviceController = require('../controllers/device.controller');
 
 router.post('/', deviceController.createNew);
 
+router.put('/:id', deviceController.updateDevice);
+
 router.get('/', (req, res) => {
   res.json({
     message: 'Default GET in device router',
