@@ -1,5 +1,5 @@
+import { useContext, useRef } from 'react';
 import classNames from 'classnames/bind';
-import { useContext, useEffect, useRef } from 'react';
 
 import styles from './DefaultLayout.module.scss';
 import Header from '@/layouts/components/Header';

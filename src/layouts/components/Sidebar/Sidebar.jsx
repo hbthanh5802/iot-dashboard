@@ -39,7 +39,7 @@ function Sidebar() {
 
   const handleLightClick = useCallback((mode) => {
     setIsLightOn(mode);
-    deviceService.updateDevice('/device/2', {
+    deviceService.updateDevice('/device/light', {
       deviceId: 2,
       action: mode,
     });
