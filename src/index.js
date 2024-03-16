@@ -26,8 +26,7 @@ app.use((error, req, res, next) => {
 mqttClient.on('connect', () => {
   if (mqttClient.connected === true) {
     // subscribe to a topic
-    subscribeTopic('esp8266/sensor/dht11');
-    subscribeTopic('esp8266/sensor/light');
+    subscribeTopic('esp8266/sensor');
     subscribeTopic('esp8266/device/status');
   }
 });

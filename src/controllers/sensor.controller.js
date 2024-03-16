@@ -1,6 +1,25 @@
 const sensorServices = require('../services/sensor.service');
+const { mqttClient, publishMessage } = require('../utils/mqttClient');
 
 const sensorController = {};
+
+const saveSensorData = async (data) => {
+  let response;
+  const { temperatureC, humidity, brightness } = data;
+  try {
+    const payload = {
+      sensorId: 'S1',
+      temperature: temperatureC,
+      humidity,
+      brightness,
+    };
+    response = await sensorServices.saveSensorData(payload);
+    return response;
+  } catch (error) {
+    console.log('Error request:', error);
+    throw new Error(error);
+  }
+};
 
 sensorController.createNew = async (req, res, next) => {
   let response;
@@ -14,5 +33,16 @@ sensorController.createNew = async (req, res, next) => {
     return next(error);
   }
 };
+
+// called each time a message is received
+mqttClient.on('message', function (topic, message) {
+  if (mqttClient.connected) {
+    const messageObj = JSON.parse(message);
+    console.log(`Received message from [${topic}]:`, messageObj);
+    if (topic === 'esp8266/sensor') {
+      saveSensorData(messageObj);
+    }
+  }
+});
 
 module.exports = sensorController;

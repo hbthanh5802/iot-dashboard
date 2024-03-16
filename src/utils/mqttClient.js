@@ -44,9 +44,9 @@ client.on('error', function (error) {
   console.log(error);
 });
 
-client.on('message', function (topic, message) {
-  // called each time a message is received
-  console.log(`Received message from [${topic}]: ${message.toString()}`);
-});
+// client.on('message', function (topic, message) {
+//   // called each time a message is received
+//   console.log(`Received message from [${topic}]: ${message.toString()}`);
+// });
 
 module.exports = { mqttClient: client, subscribeTopic, publishMessage };

@@ -14,7 +14,7 @@ const DataSensor = sequelize.define(
       type: Sequelize.DOUBLE,
       allowNull: true,
     },
-    moisture: {
+    humidity: {
       type: Sequelize.DOUBLE,
       allowNull: true,
     },
