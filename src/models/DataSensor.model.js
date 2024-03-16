@@ -12,15 +12,15 @@ const DataSensor = sequelize.define(
     },
     temperature: {
       type: Sequelize.DOUBLE,
-      allowNull: false,
+      allowNull: true,
     },
     moisture: {
       type: Sequelize.DOUBLE,
-      allowNull: false,
+      allowNull: true,
     },
     brightness: {
       type: Sequelize.INTEGER,
-      allowNull: false,
+      allowNull: true,
     },
   },
   {

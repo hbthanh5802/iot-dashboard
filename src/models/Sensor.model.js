@@ -5,8 +5,7 @@ const SensorModel = sequelize.define(
   'sensor',
   {
     id: {
-      type: Sequelize.INTEGER,
-      autoIncrement: true,
+      type: Sequelize.STRING,
       primaryKey: true,
       allowNull: false,
     },

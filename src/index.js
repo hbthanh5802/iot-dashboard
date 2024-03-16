@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const mqttClient = require('./utils/mqttClient');
+const { mqttClient, subscribeTopic } = require('./utils/mqttClient');
 
 dotenv.config();
 
@@ -16,6 +16,21 @@ app.use(cors());
 // Routes
 const useRoutes = require('./routes/index');
 useRoutes(app);
+
+app.use((error, req, res, next) => {
+  console.log(error);
+  return res.sendStatus(500);
+});
+
+// MQTT
+mqttClient.on('connect', () => {
+  if (mqttClient.connected === true) {
+    // subscribe to a topic
+    subscribeTopic('esp8266/sensor/dht11');
+    subscribeTopic('esp8266/sensor/light');
+    subscribeTopic('esp8266/device/status');
+  }
+});
 
 // Sync the models with database
 const PORT = process.env.PORT || 4005;

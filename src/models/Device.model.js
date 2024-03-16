@@ -5,8 +5,7 @@ const DeviceModel = sequelize.define(
   'device',
   {
     id: {
-      type: Sequelize.INTEGER,
-      autoIncrement: true,
+      type: Sequelize.STRING,
       primaryKey: true,
       allowNull: false,
     },
