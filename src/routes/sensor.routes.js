@@ -4,10 +4,6 @@ const sensorController = require('../controllers/sensor.controller');
 
 router.post('/create', sensorController.createNew);
 
-router.get('/', (req, res) => {
-  res.status(200).json({
-    message: 'Default GET in sensor router',
-  });
-});
+router.get('/', sensorController.getDataSensor);
 
 module.exports = router;

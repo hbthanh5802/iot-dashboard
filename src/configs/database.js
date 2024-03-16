@@ -4,6 +4,11 @@ const { DB_NAME, DB_USERNAME, DB_PASSWORD } = process.env;
 const sequelize = new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
   host: 'localhost',
   dialect: 'mysql',
+  timezone: '+07:00',
+  dialectOptions: {
+    dateStrings: true,
+    typeCast: true,
+  },
 });
 
 // Test the database connection

@@ -34,6 +34,28 @@ sensorController.createNew = async (req, res, next) => {
   }
 };
 
+sensorController.getDataSensor = async (req, res, next) => {
+  let response;
+  const { sensorId, startDate, endDate, orderBy, direction, page, pageSize } =
+    req.query;
+  try {
+    const payload = {
+      sensorId,
+      startDate,
+      endDate,
+      orderBy,
+      direction,
+      page: +page,
+      pageSize: +pageSize,
+    };
+    response = await sensorServices.fetchSensorDataByCriteria(payload);
+    res.status(201).json(response);
+  } catch (error) {
+    console.log('Error request:', error);
+    return next(error);
+  }
+};
+
 // called each time a message is received
 mqttClient.on('message', function (topic, message) {
   if (mqttClient.connected) {
