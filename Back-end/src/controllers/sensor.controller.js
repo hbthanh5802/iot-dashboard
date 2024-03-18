@@ -34,6 +34,33 @@ sensorController.createNew = async (req, res, next) => {
   }
 };
 
+sensorController.getAll = async (req, res, next) => {
+  let response;
+  try {
+    response = await sensorServices.fetchAll();
+    res.status(200).json(response);
+  } catch (error) {
+    console.log('Error request:', error);
+    res.status(500).json(response);
+    return next(error);
+  }
+};
+
+sensorController.getSensor = async (req, res, next) => {
+  let response;
+  const { sensorId } = req.params;
+  try {
+    if (!sensorId) return res.sendStatus(422);
+    const payload = { sensorId };
+    response = await sensorServices.fetchSensor(payload);
+    res.status(200).json(response);
+  } catch (error) {
+    console.log('Error request:', error);
+    res.status(500).json(response);
+    return next(error);
+  }
+};
+
 sensorController.getDataSensor = async (req, res, next) => {
   let response;
   const { sensorId, startDate, endDate, orderBy, direction, page, pageSize } =

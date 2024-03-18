@@ -29,6 +29,46 @@ deviceServices.createDevice = async (payload) => {
   return response;
 };
 
+deviceServices.fetchAll = async (payload) => {
+  const response = {
+    statusCode: 200,
+    message: 'Success to get a device',
+    data: {},
+  };
+  try {
+    const devices = await DeviceModel.findAll();
+    if (!devices) response.message = 'No device found.';
+    response.data = devices;
+  } catch (error) {
+    console.error('Error request:', error);
+    response.statusCode = 500;
+    response.message = 'Failed to get a device';
+    throw error;
+  }
+  return response;
+};
+
+deviceServices.fetchDevice = async (payload) => {
+  const { deviceId } = payload;
+  const response = {
+    statusCode: 200,
+    message: 'Success to get a device',
+    data: {},
+  };
+  try {
+    if (!deviceId) throw new Error('No deviceId found!');
+    const device = await DeviceModel.findByPk(deviceId);
+    if (!device) response.message = 'No device found.';
+    else response.data = device;
+  } catch (error) {
+    console.error('Error request:', error);
+    response.statusCode = 500;
+    response.message = 'Failed to get a device';
+    throw error;
+  }
+  return response;
+};
+
 deviceServices.updateDevice = async (payload) => {
   const { name, description, deviceId } = payload;
   const response = {
@@ -43,7 +83,6 @@ deviceServices.updateDevice = async (payload) => {
         id: deviceId,
       },
     });
-    // const device = await DeviceModel.create(requirements);
     response.data = device;
   } catch (error) {
     console.error('Error request:', error);
@@ -65,7 +104,8 @@ deviceServices.updateDeviceStatus = async (payload) => {
     const requirements = { action: action ? 'ON' : 'OFF' };
     //  SELECT `id`, `name`, `description`, `createdAt`, `updatedAt` FROM `devices` AS `device` WHERE `device`.`id` = 'D1';
     const device = await DeviceModel.findByPk(deviceId);
-    if (device && mqttClient.connected) {
+    if (!mqttClient.connected) throw new Error('MQTT is not connected');
+    if (device) {
       //INSERT INTO `dataActions` (`id`,`action`,`createdAt`,`updatedAt`,`deviceId`) VALUES (DEFAULT,?,?,?,?);
       const deviceHistory = await device.createDataAction(requirements);
       response.data = deviceHistory;
@@ -78,7 +118,6 @@ deviceServices.updateDeviceStatus = async (payload) => {
     } else {
       response.statusCode = 404;
       response.message = 'Device not found';
-      throw new Error(response.message);
     }
   } catch (error) {
     response.statusCode = 500;

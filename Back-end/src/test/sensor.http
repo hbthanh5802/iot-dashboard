@@ -1,0 +1,15 @@
+POST http://localhost:4004/api/sensor/create
+Content-Type: application/json
+Accept: application/json
+
+{
+  "sensorId": "S1",
+  "name": "Thanh-Sensor",
+  "address": "localhost-THANH"
+}
+
+###
+GET http://localhost:4004/api/sensor/S1
+
+###
+GET http://localhost:4004/api/sensor/

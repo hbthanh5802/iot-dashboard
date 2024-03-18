@@ -1,4 +1,4 @@
-PUT http://localhost:4004/api/device/update
+PUT http://localhost:4004/api/device/update-status
 Content-Type: application/json
 
 {
@@ -15,16 +15,6 @@ Accept: application/json
   "name": "Fan",
   "description": "Quạt"
 }
-###
-POST http://localhost:4004/api/sensor/create
-Content-Type: application/json
-Accept: application/json
-
-{
-  "sensorId": "S1",
-  "name": "Thanh-Sensor",
-  "address": "localhost-THANH"
-}
 
 ###
-GET http://localhost:4004/api/device
+GET http://localhost:4004/api/device?deviceId=D4

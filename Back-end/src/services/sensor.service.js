@@ -26,6 +26,46 @@ sensorServices.createSensor = async (payload) => {
   return response;
 };
 
+sensorServices.fetchAll = async (payload) => {
+  const response = {
+    statusCode: 200,
+    message: 'Success to get a device',
+    data: {},
+  };
+  try {
+    const sensors = await SensorModel.findAll();
+    if (!sensors) response.message = 'No sensor found.';
+    response.data = sensors;
+  } catch (error) {
+    console.error('Error request:', error);
+    response.statusCode = 500;
+    response.message = 'Failed to get a device';
+    throw error;
+  }
+  return response;
+};
+
+sensorServices.fetchSensor = async (payload) => {
+  const { sensorId } = payload;
+  const response = {
+    statusCode: 200,
+    message: 'Success to get a sensor',
+    data: {},
+  };
+  try {
+    if (!sensorId) throw new Error('No sensorId found!');
+    const sensor = await SensorModel.findByPk(sensorId);
+    if (!sensor) response.message = 'No sensor found.';
+    else response.data = sensor;
+  } catch (error) {
+    console.error('Error request:', error);
+    response.statusCode = 500;
+    response.message = 'Failed to get a sensor';
+    throw error;
+  }
+  return response;
+};
+
 sensorServices.saveSensorData = async (payload) => {
   const { sensorId, temperature, humidity, brightness } = payload;
   const response = {

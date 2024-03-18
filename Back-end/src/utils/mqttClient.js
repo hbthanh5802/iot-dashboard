@@ -41,7 +41,7 @@ client.on('connect', function () {
 });
 
 client.on('error', function (error) {
-  console.log('MQTT', error);
+  console.log('MQTT ERROR', JSON.stringify(error));
 });
 
 // client.on('message', function (topic, message) {

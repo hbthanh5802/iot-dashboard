@@ -17,13 +17,40 @@ deviceController.createNew = async (req, res, next) => {
   }
 };
 
+deviceController.getAll = async (req, res, next) => {
+  let response;
+  try {
+    response = await deviceServices.fetchAll();
+    res.status(200).json(response);
+  } catch (error) {
+    console.log('Error request:', error);
+    res.status(500).json(response);
+    return next(error);
+  }
+};
+
+deviceController.getDevice = async (req, res, next) => {
+  let response;
+  const { deviceId } = req.params;
+  try {
+    if (!deviceId) return res.sendStatus(422);
+    const payload = { deviceId };
+    response = await deviceServices.fetchDevice(payload);
+    res.status(200).json(response);
+  } catch (error) {
+    console.log('Error request:', error);
+    res.status(500).json(response);
+    return next(error);
+  }
+};
+
 deviceController.updateDevice = async (req, res, next) => {
   let response;
   const { name, description, deviceId } = req.body;
   try {
     const payload = { name, description };
     if (deviceId) payload.deviceId = deviceId;
-    response = await deviceServices.createDevice(payload);
+    response = await deviceServices.fetchDevice(payload);
     res.status(201).json(response);
   } catch (error) {
     console.log('Error request:', error);
