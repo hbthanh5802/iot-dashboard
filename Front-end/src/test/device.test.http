@@ -1,0 +1,7 @@
+PUT http://localhost:4004/api/device/update
+Content-Type: application/json
+
+{
+  "deviceId": "D2",
+  "action": false
+}

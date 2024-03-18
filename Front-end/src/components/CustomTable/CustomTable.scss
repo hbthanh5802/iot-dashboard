@@ -79,11 +79,20 @@
 
   .ctTable-header {
     color: var(--gray-lightest);
+    .ctTable-search-btn {
+      background-color: var(--primary) !important ;
+      border-color: #9254de;
+    }
+
+    .ctTable-search-icon {
+      color: var(--gray-lightest);
+    }
   }
 
   .ant-select-dropdown {
-    background-color: var(--bg-box-dark);
+    background-color: var(--bg-box-dark) !important;
   }
+
   .ctTable-table {
     background-color: var(--bg-box-dark);
     box-shadow: var(--bg-primary-gradient-dark);
@@ -136,6 +145,7 @@
 }
 
 // Dark theme
+
 .ctTable-dropdown-menu.dark {
   .ant-dropdown-menu {
     border: 1px solid rgba(var(--purple-rgb), 0.1) !important;

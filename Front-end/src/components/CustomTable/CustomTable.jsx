@@ -89,12 +89,14 @@ const darkTheme = {
       colorText: 'var(--gray-light)',
     },
     Select: {
-      colorBorder: 'var(--primary) !important',
       colorText: 'var(--gray-lighter)',
       controlItemBgActive: 'var(--gray)',
       selectorBg: 'var(--gray)',
       optionSelectedBg: 'var(--gray)',
       controlItemBgHover: 'var(--gray-500)',
+      optionActiveBg: 'var(--gray-800)',
+      colorBgElevated: 'var(--gray)',
+      colorTextPlaceholder: 'var(--gray-light)',
     },
     DatePicker: {
       colorBgContainer: 'var(--gray)',
@@ -139,12 +141,11 @@ function CustomTable({ data, columns, title, paginationData, handlePageChange, l
     header: columns,
     body: data,
   });
-
+  // Setup orderField options
   const optionOrderBy = useMemo(() => {
     const resultOrderFiltered = columns.filter(({ dataIndex }) => {
       const field = dataIndex.toLowerCase();
-      if (!field.startsWith('id') && !field.endsWith('id') && field !== 'createdat' && field !== 'updatedat')
-        return true;
+      if (!field.startsWith('id') && !field.endsWith('id') && field !== 'updatedat') return true;
       return false;
     });
     return resultOrderFiltered.map((item) => ({
@@ -213,7 +214,7 @@ function CustomTable({ data, columns, title, paginationData, handlePageChange, l
       orderCOndition = { ...originalFilterData, ...orderFilter };
     }
     // Date filter
-    console.log('dateFilter', dateFilter);
+    // console.log('dateFilter', dateFilter);
     // console.log('filterData', filterData);
     let dateCondition = {};
     const { startDate, endDate } = dateFilter;
@@ -297,7 +298,11 @@ function CustomTable({ data, columns, title, paginationData, handlePageChange, l
               />
             </Space.Compact>
             <Tooltip title="search">
-              <Button onClick={handleSearch} icon={<IoSearch className="ctTable-search-icon" />} />
+              <Button
+                className="ctTable-search-btn"
+                onClick={handleSearch}
+                icon={<IoSearch className="ctTable-search-icon" />}
+              />
             </Tooltip>
           </Space>
         </Space>
@@ -366,6 +371,22 @@ function CustomTable({ data, columns, title, paginationData, handlePageChange, l
           //   components: {
           //     Table: {
           //       rowHoverBg: 'rgba(110, 17, 217, 0.1)',
+          //       rowSelectedBg: 'rgba(110, 17, 217, 0.2)',
+          //       rowSelectedHoverBg: 'rgba(110, 17, 217, 0.3)',
+          //       headerBg: '#232227',
+          //       bodySortBg: 'rgba(110, 17, 217, 0.1)',
+          //       headerSortHoverBg: 'rgba(110, 17, 217, 0.1)',
+          //       headerSortActiveBg: 'rgba(110, 17, 217, 0.2)',
+          //       colorBgContainer: '#232227',
+          //       borderColor: 'rgba(var(--secondary-rgb), 0.6)',
+          //       colorText: 'var(--gray-400)',
+          //       colorTextHeading: 'var(--gray-300)',
+          //       headerFilterHoverBg: 'var(--gray)',
+          //       headerSplitColor: 'var(--gray)',
+          //       colorIcon: '#adb5bd',
+          //       filterDropdownBg: 'var(--gray)',
+          //       filterDropdownMenuBg: 'var(--gray)',
+          //       footerBg: 'var(--bg-box-dark)',
           //     },
           //   },
           // }}
