@@ -1,15 +1,31 @@
 import { useContext, useState, useEffect, useMemo } from 'react';
 import classNames from 'classnames';
-import { ConfigProvider, Table, Checkbox, Dropdown, Space } from 'antd';
 import { downloadExcel } from 'react-export-table-to-excel';
 import { CSVLink } from 'react-csv';
+
+import {
+  ConfigProvider,
+  Table,
+  Checkbox,
+  Dropdown,
+  Space,
+  Flex,
+  Tooltip,
+  Select,
+  Button,
+  message,
+  DatePicker,
+} from 'antd';
 
 import * as time from '@/utils/time';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { RiFileExcel2Fill } from 'react-icons/ri';
+import { IoSearch } from 'react-icons/io5';
 import { FaFileCsv } from 'react-icons/fa';
-import './CustomTable.scss';
+import { FaArrowRight } from 'react-icons/fa6';
 import moment from 'moment';
+
+import './CustomTable.scss';
 
 const lightTheme = {
   token: {
@@ -97,9 +113,23 @@ const darkTheme = {
   },
 };
 
-function CustomTable({ data, columns, title }) {
+const directionOrderOption = [
+  {
+    value: 'DESC',
+    label: 'Descend',
+  },
+  {
+    value: 'ASC',
+    label: 'Ascend',
+  },
+];
+
+function CustomTable({ data, columns, title, paginationData, handlePageChange, loading, filterData }) {
+  const [messageApi, contextHolder] = message.useMessage();
   const { dark } = useContext(ThemeContext);
   const [paginationPageSize, setPaginationPageSize] = useState(10);
+  const [orderFilter, setOrderFilter] = useState({});
+  const [dateFilter, setDateFilter] = useState({});
   const [selectedData, setSelectedData] = useState(data);
   const [checkedColumnList, setCheckedColumnList] = useState(() => {
     return columns.map((item) => item.key);
@@ -109,6 +139,19 @@ function CustomTable({ data, columns, title }) {
     header: columns,
     body: data,
   });
+
+  const optionOrderBy = useMemo(() => {
+    const resultOrderFiltered = columns.filter(({ dataIndex }) => {
+      const field = dataIndex.toLowerCase();
+      if (!field.startsWith('id') && !field.endsWith('id') && field !== 'createdat' && field !== 'updatedat')
+        return true;
+      return false;
+    });
+    return resultOrderFiltered.map((item) => ({
+      label: item?.dataIndex[0]?.toUpperCase() + item?.dataIndex?.slice(1),
+      value: item?.dataIndex?.toLowerCase(),
+    }));
+  }, [columns]);
 
   const checkColumnOptions = useMemo(() => {
     return columns.map((column) => ({
@@ -150,11 +193,45 @@ function CustomTable({ data, columns, title }) {
   // Checkbox selection
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
+      console.log(selectedRows);
       setSelectedData(selectedRows.length > 0 ? selectedRows : data);
     },
     getCheckboxProps: (record) => ({
       name: record.id,
     }),
+  };
+
+  const handleSearch = () => {
+    let originalFilterData = { ...filterData };
+    // Oder filter
+    let orderCOndition = {};
+    if (!orderFilter.orderBy || !orderFilter.direction) {
+      messageApi.warning('Something went wrong with ORDER CONDITION!');
+      const { orderBy, direction, ...otherFilters } = originalFilterData;
+      originalFilterData = { ...otherFilters };
+    } else {
+      orderCOndition = { ...originalFilterData, ...orderFilter };
+    }
+    // Date filter
+    console.log('dateFilter', dateFilter);
+    // console.log('filterData', filterData);
+    let dateCondition = {};
+    const { startDate, endDate } = dateFilter;
+    if (startDate) {
+      dateCondition.startDate = startDate;
+    } else {
+      const { startDate, ...otherFilters } = originalFilterData;
+      originalFilterData = { ...otherFilters };
+    }
+    if (endDate) {
+      dateCondition.endDate = endDate;
+    } else {
+      const { endDate, ...otherFilters } = originalFilterData;
+      originalFilterData = { ...otherFilters };
+    }
+
+    // console.log('finalFilterResult', finalFilterResult);
+    handlePageChange({ ...originalFilterData, ...orderCOndition, ...dateCondition });
   };
 
   function handleExportData({ key }) {
@@ -174,6 +251,59 @@ function CustomTable({ data, columns, title }) {
         break;
     }
   }
+
+  const renderTableHeader = () => {
+    return (
+      <Flex align="center" justify="space-between" className={'ctTable-header'}>
+        <p className={'ctTable-header-title'}>{title}</p>
+
+        <Space>
+          <Flex align="center" gap={10}>
+            <p className="csTable-filter-title">Date filter:</p>
+            <Space>
+              <DatePicker
+                showTime
+                onChange={(date, dateString) => setDateFilter((prev) => ({ ...prev, startDate: dateString }))}
+              />
+              <p className="csTable-filter-title">
+                <FaArrowRight style={{ display: 'flex' }} />
+              </p>
+              <DatePicker
+                showTime
+                onChange={(date, dateString) => setDateFilter((prev) => ({ ...prev, endDate: dateString }))}
+              />
+            </Space>
+          </Flex>
+          <Space>
+            <p className="csTable-filter-title">Order:</p>
+            <Space.Compact>
+              <Select
+                allowClear
+                placeholder="Select a field"
+                style={{
+                  width: 160,
+                }}
+                options={optionOrderBy}
+                onChange={(value) => setOrderFilter((prev) => ({ ...prev, orderBy: value }))}
+              />
+              <Select
+                allowClear
+                placeholder="Direction"
+                style={{
+                  width: 120,
+                }}
+                options={directionOrderOption}
+                onChange={(value) => setOrderFilter((prev) => ({ ...prev, direction: value }))}
+              />
+            </Space.Compact>
+            <Tooltip title="search">
+              <Button onClick={handleSearch} icon={<IoSearch className="ctTable-search-icon" />} />
+            </Tooltip>
+          </Space>
+        </Space>
+      </Flex>
+    );
+  };
 
   const renderTableFooter = () => {
     return (
@@ -225,72 +355,63 @@ function CustomTable({ data, columns, title }) {
   }, [filteredColumns, selectedData, checkedColumnList]);
 
   return (
-    <div className={classNames('ctTable-wrapper', { dark })}>
-      <ConfigProvider
-        // theme={{
-        //   token: {
-        //     colorPrimary: '#9254de',
-        //   },
-        //   components: {
-        //     Table: {
-        //       rowHoverBg: 'rgba(110, 17, 217, 0.1)',
-        //       rowSelectedBg: 'rgba(110, 17, 217, 0.2)',
-        //       rowSelectedHoverBg: 'rgba(110, 17, 217, 0.3)',
-        //       headerBg: '#232227',
-        //       bodySortBg: 'rgba(110, 17, 217, 0.1)',
-        //       headerSortHoverBg: 'rgba(110, 17, 217, 0.1)',
-        //       headerSortActiveBg: 'rgba(110, 17, 217, 0.2)',
-        //       colorBgContainer: '#232227',
-        //       borderColor: 'rgba(var(--secondary-rgb), 0.6)',
-        //       colorText: 'var(--gray-400)',
-        //       colorTextHeading: 'var(--gray-300)',
-        //       headerFilterHoverBg: 'var(--gray)',
-        //       headerSplitColor: 'var(--gray)',
-        //       colorIcon: '#adb5bd',
-        //       filterDropdownBg: 'var(--gray)',
-        //       filterDropdownMenuBg: 'var(--gray)',
-        //       footerBg: 'var(--bg-box-dark)',
-        //     },
-        //   },
-        // }}
-        theme={dark ? darkTheme : lightTheme}
-      >
-        <Table
-          style={{
-            width: '100%',
-          }}
-          className={classNames('ctTable-table')}
-          columns={filteredColumns}
-          dataSource={data}
-          bordered
-          size="middle"
-          title={() => <p className={classNames('ctTable-header')}>{title}</p>}
-          footer={renderTableFooter}
-          rowSelection={{
-            type: 'checkbox',
-            ...rowSelection,
-          }}
-          pagination={{
-            position: ['bottomCenter'],
-            pageSize: paginationPageSize,
-            total: data.length,
-            showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
-          }}
-          scroll={{
-            y: 500,
-          }}
-          onChange={(pagination, filters, sorter, extra) => {
-            // console.group();
-            // console.log('pagination', pagination);
-            // console.log('filters', filters);
-            // console.log('sorter', sorter);
-            // console.log('extra', extra);
-            // console.groupEnd();
-            setPaginationPageSize(pagination.pageSize);
-          }}
-        />
-      </ConfigProvider>
-    </div>
+    <>
+      {contextHolder}
+      <div className={classNames('ctTable-wrapper', { dark })}>
+        <ConfigProvider
+          // theme={{
+          //   token: {
+          //     colorPrimary: '#9254de',
+          //   },
+          //   components: {
+          //     Table: {
+          //       rowHoverBg: 'rgba(110, 17, 217, 0.1)',
+          //     },
+          //   },
+          // }}
+          theme={dark ? darkTheme : lightTheme}
+        >
+          <Table
+            loading={loading}
+            style={{
+              width: '100%',
+            }}
+            className={classNames('ctTable-table')}
+            columns={filteredColumns}
+            dataSource={data}
+            bordered
+            size="middle"
+            title={renderTableHeader}
+            footer={renderTableFooter}
+            rowSelection={{
+              type: 'checkbox',
+              ...rowSelection,
+            }}
+            pagination={{
+              position: ['bottomCenter'],
+              pageSize: paginationPageSize,
+              total: paginationData.total,
+              showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+            }}
+            scroll={{ y: 500 }}
+            onChange={(pagination, filters, sorter, extra) => {
+              console.group();
+              console.log('pagination', pagination);
+              console.groupEnd();
+
+              if (pagination) {
+                handlePageChange({
+                  ...filterData,
+                  page: pagination.current,
+                  pageSize: pagination.pageSize,
+                });
+                setPaginationPageSize(pagination.pageSize);
+              }
+            }}
+          />
+        </ConfigProvider>
+      </div>
+    </>
   );
 }
 

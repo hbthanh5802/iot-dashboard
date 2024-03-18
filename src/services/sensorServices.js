@@ -1,10 +1,14 @@
-import httpRequest from '@/utils/httpRequest';
+import sendRequest from '@/utils/httpRequest';
+const sensorServices = {};
 
-export const getSensorData = async () => {
+sensorServices.getSensorData = async ({ method, token, data, params }) => {
+  let response;
   try {
-    const { data } = await httpRequest.get('/sensor');
-    return data;
+    response = await sendRequest({ method: 'GET', data, token, path: '/sensor', params });
+    return response;
   } catch (error) {
     console.log(error);
   }
 };
+
+export default sensorServices;
