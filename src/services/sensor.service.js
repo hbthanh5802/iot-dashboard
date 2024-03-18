@@ -58,7 +58,7 @@ sensorServices.saveSensorData = async (payload) => {
 sensorServices.fetchSensorDataByCriteria = async (payload) => {
   const response = {
     statusCode: 201,
-    message: 'Success to add device',
+    message: 'Success to get data sensor',
     data: {},
     meta: {},
   };
@@ -98,6 +98,10 @@ sensorServices.fetchSensorDataByCriteria = async (payload) => {
         whereCondition.createdAt = {
           [Op.gte]: dateHelper.convertDateFormat(searchCriteria.startDate),
         };
+      } else if (searchCriteria.endDate) {
+        whereCondition.createdAt = {
+          [Op.lte]: dateHelper.convertDateFormat(searchCriteria.endDate),
+        };
       }
       // ORDER CONDITION
       if (searchCriteria.orderBy && searchCriteria.direction) {
@@ -134,7 +138,7 @@ sensorServices.fetchSensorDataByCriteria = async (payload) => {
     }
   } catch (error) {
     response.statusCode = 500;
-    response.message = 'Failed to add device';
+    response.message = 'Failed to get data sensor';
     throw error;
   }
   return response;

@@ -49,7 +49,7 @@ sensorController.getDataSensor = async (req, res, next) => {
       pageSize: +pageSize,
     };
     response = await sensorServices.fetchSensorDataByCriteria(payload);
-    res.status(201).json(response);
+    res.status(200).json(response);
   } catch (error) {
     console.log('Error request:', error);
     return next(error);
