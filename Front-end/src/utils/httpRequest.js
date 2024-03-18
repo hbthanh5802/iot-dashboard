@@ -22,11 +22,7 @@ async function sendRequest({ path, method, token = null, data = null, params = n
     const response = await instance.request(configs);
     return response.data;
   } catch (error) {
-    if (error.response) {
-      console.log(error.response.data);
-      console.log(error.response.status);
-      console.log(error.response.headers);
-    }
+    throw error.response;
   }
 }
 

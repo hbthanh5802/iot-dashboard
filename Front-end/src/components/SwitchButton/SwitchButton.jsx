@@ -11,7 +11,7 @@ function SwitchButton({ mode, onClick }) {
   return (
     <div className={cx('wrapper', { dark })} onClick={() => onClick(!mode)}>
       <div className={cx('switch-btn')}>
-        <input type="checkbox" />
+        <input type="checkbox" checked={mode} readOnly />
         <div className={cx('knobs')}></div>
         <div className={cx('layer')}></div>
       </div>

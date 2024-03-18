@@ -28,15 +28,16 @@ function Sidebar() {
       };
       messageApi.loading(`Waiting...`, [0.5]);
       deviceServices
-        .updateDevice({ data })
+        .updateDeviceStatus({ data })
         .then((response) => {
-          messageApi.success(`Succeed to ${mode ? 'TURN OFF' : 'TURN ON'} THE FAN`);
+          console.log('response', response);
+          messageApi.success(`Succeed to ${!mode ? 'TURN OFF' : 'TURN ON'} THE FAN`);
           setIsFanOn(mode);
         })
         .catch((error) => {
-          messageApi.error(`Failed to ${mode ? 'TURN OFF' : 'TURN ON'} THE FAN`);
+          console.log('error', error);
+          messageApi.error(`Failed to ${!mode ? 'TURN OFF' : 'TURN ON'} THE FAN`);
           setIsFanOn(!mode);
-          console.log(error);
         });
     },
     [messageApi],
@@ -48,17 +49,17 @@ function Sidebar() {
         deviceId: 'D2',
         action: mode,
       };
-      messageApi.loading(`Waiting...`, [0.5]);
       deviceServices
-        .updateDevice({ data })
+        .updateDeviceStatus({ data })
         .then((response) => {
-          messageApi.success(`Succeed to ${mode ? 'TURN OFF' : 'TURN ON'} THE LIGHT`);
+          console.log('response', response);
+          messageApi.success(`Succeed to ${!mode ? 'TURN OFF' : 'TURN ON'} THE LIGHT`);
           setIsLightOn(mode);
         })
         .catch((error) => {
-          messageApi.success(`Failed to ${mode ? 'TURN OFF' : 'TURN ON'} THE LIGHT`);
+          console.log('error', error);
+          messageApi.error(`Failed to ${!mode ? 'TURN OFF' : 'TURN ON'} THE LIGHT`);
           setIsFanOn(!mode);
-          console.log(error);
         });
     },
     [messageApi],
