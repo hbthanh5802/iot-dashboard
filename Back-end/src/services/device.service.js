@@ -5,9 +5,6 @@ const { Op } = require('sequelize');
 const dateHelper = require('../utils/date.helper');
 const deviceServices = {};
 
-let fanIds = ['D1'];
-let lightIds = ['D2'];
-
 deviceServices.createDevice = async (payload) => {
   const { name, description, deviceId } = payload;
   const response = {
@@ -94,9 +91,9 @@ deviceServices.updateDevice = async (payload) => {
 };
 
 deviceServices.updateDeviceStatus = async (payload) => {
-  const { deviceId, action } = payload;
+  const { deviceId, action, _save } = payload;
   const response = {
-    statusCode: 200,
+    statusCode: 201,
     message: 'Success to update device status',
     data: {},
   };
@@ -104,16 +101,13 @@ deviceServices.updateDeviceStatus = async (payload) => {
     const requirements = { action: action ? 'ON' : 'OFF' };
     //  SELECT `id`, `name`, `description`, `createdAt`, `updatedAt` FROM `devices` AS `device` WHERE `device`.`id` = 'D1';
     const device = await DeviceModel.findByPk(deviceId);
-    if (!mqttClient.connected) throw new Error('MQTT is not connected');
     if (device) {
       //INSERT INTO `dataActions` (`id`,`action`,`createdAt`,`updatedAt`,`deviceId`) VALUES (DEFAULT,?,?,?,?);
-      const deviceHistory = await device.createDataAction(requirements);
-      response.data = deviceHistory;
-      //
-      if (fanIds.includes(deviceId)) {
-        publishMessage(`esp8266/device/fan`, requirements);
-      } else if (lightIds.includes(deviceId)) {
-        publishMessage(`esp8266/device/light`, requirements);
+      if (_save) {
+        const deviceHistory = await device.createDataAction(requirements);
+        response.data = deviceHistory;
+      } else {
+        response.message = 'Success to update device status but NOT SAVE';
       }
     } else {
       response.statusCode = 404;
@@ -170,6 +164,10 @@ deviceServices.fetchDataActionByCriteria = async (payload) => {
         whereCondition.createdAt = {
           [Op.lte]: dateHelper.convertDateFormat(searchCriteria.endDate),
         };
+      }
+      // ACTION CONDITION
+      if (searchCriteria.action) {
+        whereCondition.action = searchCriteria.action.trim();
       }
       // ORDER CONDITION
       if (searchCriteria.orderBy && searchCriteria.direction) {

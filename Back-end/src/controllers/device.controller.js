@@ -1,4 +1,5 @@
 const deviceServices = require('../services/device.service');
+const { mqttClient, publishMessage } = require('../utils/mqttClient');
 
 const deviceController = {};
 
@@ -61,11 +62,21 @@ deviceController.updateDevice = async (req, res, next) => {
 
 deviceController.updateDeviceStatus = async (req, res, next) => {
   let response;
-  const { deviceId, action } = req.body;
+  const { deviceId, action, _save } = req.body;
   try {
     if (!deviceId) return res.sendStatus(422);
-    const payload = { deviceId, action };
+    const payload = { deviceId, action, _save };
+    if (!mqttClient.connected) return res.sendStatus(500);
     response = await deviceServices.updateDeviceStatus(payload);
+    if (response.statusCode === 201) {
+      if (deviceId.includes(['D1'])) {
+        publishMessage(`esp8266/device/fan`, { action: action ? 'ON' : 'OFF' });
+      } else if (deviceId.includes(['D2'])) {
+        publishMessage(`esp8266/device/light`, {
+          action: action ? 'ON' : 'OFF',
+        });
+      }
+    }
     res.status(201).json(response);
   } catch (error) {
     console.error('Error request:', error);
@@ -75,8 +86,16 @@ deviceController.updateDeviceStatus = async (req, res, next) => {
 
 deviceController.getDataAction = async (req, res, next) => {
   let response;
-  const { deviceId, startDate, endDate, orderBy, direction, page, pageSize } =
-    req.query;
+  const {
+    deviceId,
+    startDate,
+    endDate,
+    orderBy,
+    direction,
+    page,
+    pageSize,
+    action,
+  } = req.query;
   try {
     const payload = {
       deviceId,
@@ -84,6 +103,7 @@ deviceController.getDataAction = async (req, res, next) => {
       endDate,
       orderBy,
       direction,
+      action,
       page: +page,
       pageSize: +pageSize,
     };

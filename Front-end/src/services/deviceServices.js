@@ -38,4 +38,14 @@ deviceServices.getAllDevices = async ({ method, token, data, params, path }) => 
   }
 };
 
+deviceServices.getDataAction = async ({ method, token, data, params, path }) => {
+  let response;
+  try {
+    response = await sendRequest({ method: 'GET', data, token, path: '/device/action', params });
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export default deviceServices;

@@ -1,5 +1,7 @@
 const sensorServices = require('../services/sensor.service');
 const { mqttClient, publishMessage } = require('../utils/mqttClient');
+const { useSocket } = require('../utils/socketClient.helper');
+const io = require('.././index');
 
 const sensorController = {};
 
@@ -83,13 +85,35 @@ sensorController.getDataSensor = async (req, res, next) => {
   }
 };
 
-// called each time a message is received
+let _socket;
+
+io.on('connection', (socket) => {
+  console.log('Client is connected');
+
+  _socket = socket;
+
+  socket.on('disconnect', () => {
+    console.log('Client is disconnected');
+  });
+});
+
+// mqttClient.on('message', function (topic, message) {
 mqttClient.on('message', function (topic, message) {
   if (mqttClient.connected) {
     const messageObj = JSON.parse(message);
     console.log(`Received message from [${topic}]:`, messageObj);
     if (topic === 'esp8266/sensor') {
-      saveSensorData(messageObj);
+      saveSensorData(messageObj)
+        .then((response) => {
+          if (response.statusCode === 201) {
+            _socket?.emit('sensorData', JSON.stringify(response?.data));
+            _socket?.emit('sensorData2', JSON.stringify(response?.data));
+          }
+        })
+        .catch((error) => {})
+        .catch(() => {
+          canSend = false;
+        });
     }
   }
 });

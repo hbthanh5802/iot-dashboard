@@ -1,4 +1,5 @@
 const express = require('express');
+const http = require('http');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
@@ -8,10 +9,18 @@ const { mqttClient, subscribeTopic } = require('./utils/mqttClient');
 dotenv.config();
 
 const app = express();
+app.use(cors());
+const server = http.createServer(app);
+
 app.use(morgan('tiny'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
+
+// SOCKET
+const socketIo = require('socket.io');
+const io = socketIo(server);
+module.exports = io;
 
 // Routes
 const useRoutes = require('./routes/index');
@@ -49,7 +58,7 @@ sequelize
   .sync({ force: false })
   .then(() => {
     console.log('Database synchronized.');
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`Server is running on http://localhost:${PORT}`);
     });
   })

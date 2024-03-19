@@ -126,5 +126,9 @@ span.yellow-light {
       color: var(--gray-light);
       transition: all 0.8s ease;
     }
+
+    .control-icon svg.fan-icon {
+      color: var(--info);
+    }
   }
 }

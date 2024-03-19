@@ -15,6 +15,8 @@ import {
   Button,
   message,
   DatePicker,
+  Divider,
+  Tag,
 } from 'antd';
 
 import * as time from '@/utils/time';
@@ -126,7 +128,18 @@ const directionOrderOption = [
   },
 ];
 
-function CustomTable({ data, columns, title, paginationData, handlePageChange, loading, filterData }) {
+const actionFilterOption = [
+  {
+    value: 'ON',
+    label: <Tag color="green">ON</Tag>,
+  },
+  {
+    value: 'OFF',
+    label: <Tag color="red">OFF</Tag>,
+  },
+];
+
+function CustomTable({ data, columns, title, paginationData, handlePageChange, loading, filterData, ...otherProps }) {
   const [messageApi, contextHolder] = message.useMessage();
   const { dark } = useContext(ThemeContext);
   const [paginationPageSize, setPaginationPageSize] = useState(10);
@@ -145,7 +158,7 @@ function CustomTable({ data, columns, title, paginationData, handlePageChange, l
   const optionOrderBy = useMemo(() => {
     const resultOrderFiltered = columns.filter(({ dataIndex }) => {
       const field = dataIndex.toLowerCase();
-      if (!field.startsWith('id') && !field.endsWith('id') && field !== 'updatedat') return true;
+      if (!field.startsWith('id') && !field.endsWith('id') && field !== 'updatedat' && field !== 'action') return true;
       return false;
     });
     return resultOrderFiltered.map((item) => ({
@@ -259,6 +272,26 @@ function CustomTable({ data, columns, title, paginationData, handlePageChange, l
         <p className={'ctTable-header-title'}>{title}</p>
 
         <Space>
+          {window.location.pathname === '/history/actions' && (
+            <Space>
+              <p className="csTable-filter-title">Action:</p>
+              <Tooltip title="Select and show results immediately">
+                <>
+                  <Select
+                    allowClear
+                    placeholder="Select an action"
+                    style={{
+                      width: 150,
+                    }}
+                    options={actionFilterOption}
+                    onChange={(value) => otherProps.handleChangeFilter(value)}
+                  />
+                </>
+              </Tooltip>
+            </Space>
+          )}
+          <Divider type="vertical" />
+
           <Flex align="center" gap={10}>
             <p className="csTable-filter-title">Date filter:</p>
             <Space>

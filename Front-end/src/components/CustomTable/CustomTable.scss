@@ -14,6 +14,11 @@
 }
 
 .ctTable-table {
+  .ant-divider {
+    background-color: var(--gray-200);
+    height: 2.4rem;
+  }
+
   .ant-table-title {
     display: flex;
     align-items: center;

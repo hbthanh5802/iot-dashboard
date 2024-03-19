@@ -1,5 +1,6 @@
 import classNames from 'classnames/bind';
-import { useContext } from 'react';
+import socketIOClient from 'socket.io-client';
+import { useContext, useEffect } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -16,6 +17,7 @@ import styles from './Chart.module.scss';
 import { ThemeContext } from '@/contexts/ThemeContext';
 
 const cx = classNames.bind(styles);
+const ENDPOINT = `http://127.0.0.1:4004`;
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -45,6 +47,7 @@ function Chart() {
       },
     ],
   };
+
   const options = {
     responsive: true,
     plugins: {
@@ -57,6 +60,17 @@ function Chart() {
       },
     },
   };
+
+  // useEffect(() => {
+  //   const socket = socketIOClient(ENDPOINT, { transports: ['websocket', 'polling', 'flashsocket'] });
+  //   socket.on('sensorData2', (data) => {
+  //     console.log(JSON.parse(data));
+  //     const sensorData = JSON.parse(data);
+  //   });
+  //   return () => {
+  //     socket.disconnect();
+  //   };
+  // }, []);
 
   return (
     <div className={cx('wrapper', { dark })}>

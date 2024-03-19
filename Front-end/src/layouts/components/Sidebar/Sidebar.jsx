@@ -21,10 +21,11 @@ function Sidebar() {
   const [isLightOn, setIsLightOn] = useState(false);
 
   const handleFanClick = useCallback(
-    (mode) => {
+    (mode, _save) => {
       const data = {
         deviceId: 'D1',
         action: mode,
+        _save,
       };
       messageApi.loading(`Waiting...`, [0.5]);
       deviceServices
@@ -44,10 +45,12 @@ function Sidebar() {
   );
 
   const handleLightClick = useCallback(
-    (mode) => {
+    (mode, _save) => {
+      console.log('Save', _save);
       const data = {
         deviceId: 'D2',
         action: mode,
+        _save,
       };
       deviceServices
         .updateDeviceStatus({ data })
@@ -59,7 +62,7 @@ function Sidebar() {
         .catch((error) => {
           console.log('error', error);
           messageApi.error(`Failed to ${!mode ? 'TURN OFF' : 'TURN ON'} THE LIGHT`);
-          setIsFanOn(!mode);
+          setIsLightOn(!mode);
         });
     },
     [messageApi],
@@ -80,6 +83,41 @@ function Sidebar() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFanOn]);
+
+  useEffect(() => {
+    const lightParams = {
+      deviceId: 'D2',
+      orderBy: 'createdAt',
+      direction: 'DESC',
+      page: 1,
+      pageSize: 1,
+    };
+    const fanParams = {
+      deviceId: 'D1',
+      orderBy: 'createdAt',
+      direction: 'DESC',
+      page: 1,
+      pageSize: 1,
+    };
+    const getLatestFanStatus = deviceServices.getDataAction({ params: fanParams });
+    const getLatestLightStatus = deviceServices.getDataAction({ params: lightParams });
+    Promise.all([getLatestFanStatus, getLatestLightStatus])
+      .then(([fanResponse, lightResponse]) => {
+        // console.log(fanResponse, lightResponse);
+        if (fanResponse?.data?.length > 0) {
+          handleFanClick(fanResponse.data[0].action === 'ON' ? true : false, false);
+          // setIsFanOn(fanResponse.data[0].action === 'ON' ? true : false);
+        }
+        if (lightResponse?.data?.length > 0) {
+          handleLightClick(lightResponse.data[0].action === 'ON' ? true : false, false);
+          // setIsLightOn(lightResponse.data[0].action === 'ON' ? true : false);
+        }
+      })
+      .catch(([fanError, lightError]) => {
+        messageApi.error('Failed to get latest device status!');
+        console.log('Error when getting latest device status');
+      });
+  }, [messageApi, handleFanClick, handleLightClick]);
 
   return (
     <>
@@ -140,7 +178,7 @@ function Sidebar() {
           <div className={cx('control')}>
             <span className={cx('control-icon')}>
               <animated.div style={{ ...spin }}>
-                <PiFanFill />
+                <PiFanFill className={cx('fan-icon', { dark })} />
               </animated.div>
             </span>
             <div className={cx('control-btn')}>

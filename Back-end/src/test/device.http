@@ -17,4 +17,4 @@ Accept: application/json
 }
 
 ###
-GET http://localhost:4004/api/device?deviceId=D4
+GET http://localhost:4004/api/device/D3

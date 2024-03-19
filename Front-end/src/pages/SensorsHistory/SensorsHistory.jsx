@@ -16,17 +16,17 @@ const columns = [
   },
   {
     key: 'temperature',
-    title: 'Temperature',
+    title: 'Temperature (°C)',
     dataIndex: 'temperature',
   },
   {
     key: 'humidity',
-    title: 'Humidity',
+    title: 'Humidity (%)',
     dataIndex: 'humidity',
   },
   {
     key: 'brightness',
-    title: 'Brightness',
+    title: 'Brightness (Lux)',
     dataIndex: 'brightness',
   },
   {

@@ -81,10 +81,12 @@ sensorServices.saveSensorData = async (payload) => {
       brightness,
     };
     const sensor = await SensorModel.findByPk(sensorId);
-    console;
     if (sensor) {
       const dataSensor = await sensor.createDataSensor(requirements);
       if (dataSensor) response.data = dataSensor;
+    } else {
+      response.statusCode = 404;
+      response.message = 'Sensor not found';
     }
   } catch (error) {
     console.error('Error request:', error);
