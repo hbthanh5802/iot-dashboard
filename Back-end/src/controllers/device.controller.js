@@ -66,7 +66,7 @@ deviceController.updateDeviceStatus = async (req, res, next) => {
   try {
     if (!deviceId) return res.sendStatus(422);
     const payload = { deviceId, action, _save };
-    if (!mqttClient.connected) return res.sendStatus(500);
+    if (!mqttClient.connected && _save) return res.sendStatus(500);
     response = await deviceServices.updateDeviceStatus(payload);
     if (response.statusCode === 201) {
       if (deviceId.includes(['D1'])) {
