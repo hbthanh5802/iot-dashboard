@@ -17,6 +17,7 @@ import {
   DatePicker,
   Divider,
   Tag,
+  FloatButton,
 } from 'antd';
 
 import * as time from '@/utils/time';
@@ -24,7 +25,10 @@ import { ThemeContext } from '@/contexts/ThemeContext';
 import { RiFileExcel2Fill } from 'react-icons/ri';
 import { IoSearch } from 'react-icons/io5';
 import { FaFileCsv } from 'react-icons/fa';
+import { MdDeleteForever } from 'react-icons/md';
+import { LuRefreshCw } from 'react-icons/lu';
 import { FaArrowRight } from 'react-icons/fa6';
+import { RiToolsFill } from 'react-icons/ri';
 import moment from 'moment';
 
 import './CustomTable.scss';
@@ -463,6 +467,19 @@ function CustomTable({ data, columns, title, paginationData, handlePageChange, l
               }
             }}
           />
+          <>
+            <FloatButton.Group
+              trigger="hover"
+              type="primary"
+              style={{
+                right: 24,
+              }}
+              icon={<RiToolsFill />}
+            >
+              <FloatButton icon={<MdDeleteForever style={{ fill: 'red' }} />} tooltip={'Delete'} />
+              <FloatButton icon={<LuRefreshCw />} tooltip="Refresh" />
+            </FloatButton.Group>
+          </>
         </ConfigProvider>
       </div>
     </>

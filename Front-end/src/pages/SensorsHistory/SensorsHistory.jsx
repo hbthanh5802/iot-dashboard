@@ -56,7 +56,7 @@ function SensorsHistory() {
       try {
         setLoading(true);
         response = await sensorServices.getSensorData({ params: filters });
-        const dataSensor = response.data.map((dataItem, index) => ({ ...dataItem, key: dataItem.id }));
+        const dataSensor = response.data.map((dataItem, index) => ({ ...dataItem, key: index }));
         setSensorData(dataSensor);
         setPagination(response?.meta?.pagination);
       } catch (error) {

@@ -85,6 +85,23 @@ sensorController.getDataSensor = async (req, res, next) => {
   }
 };
 
+sensorController.deleteDataSensor = async (req, res, next) => {
+  let response;
+  const { dataId } = req.query;
+  try {
+    if (!dataId) return res.sendStatus(422);
+    let id = dataId && dataId.split(',').map((item) => +item);
+    const payload = {
+      dataId: id,
+    };
+    response = await sensorServices.removeSensorData(payload);
+    res.status(200).json(response);
+  } catch (error) {
+    console.log('Error request:', error);
+    return next(error);
+  }
+};
+
 let _socket;
 
 io.on('connection', (socket) => {

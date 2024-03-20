@@ -115,4 +115,21 @@ deviceController.getDataAction = async (req, res, next) => {
   }
 };
 
+deviceController.deleteDataAction = async (req, res, next) => {
+  let response;
+  const { dataId } = req.query;
+  try {
+    if (!dataId) return res.sendStatus(422);
+    let id = dataId && dataId.split(',').map((item) => +item);
+    const payload = {
+      dataId: id,
+    };
+    response = await deviceServices.removeActionData(payload);
+    res.status(200).json(response);
+  } catch (error) {
+    console.log('Error request:', error);
+    return next(error);
+  }
+};
+
 module.exports = deviceController;

@@ -207,4 +207,35 @@ deviceServices.fetchDataActionByCriteria = async (payload) => {
   return response;
 };
 
+deviceServices.removeActionData = async (payload) => {
+  const { dataId } = payload;
+  const response = {
+    statusCode: 200,
+    message: 'Success to delete data action',
+    data: {},
+  };
+  try {
+    if (!Array.isArray(dataId)) {
+      response.statusCode = 422;
+      response.message = 'The dataId is invalid';
+      throw new Error(response.message);
+    } else {
+      const results = await DataActionModel.destroy({
+        where: {
+          id: {
+            [Op.in]: dataId,
+          },
+        },
+      });
+      response.data = results;
+    }
+  } catch (error) {
+    console.error('Error request:', error);
+    response.statusCode = 500;
+    response.message = 'Failed to delete data action';
+    throw error;
+  }
+  return response;
+};
+
 module.exports = deviceServices;

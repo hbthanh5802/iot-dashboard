@@ -13,3 +13,6 @@ GET http://localhost:4004/api/sensor/S1
 
 ###
 GET http://localhost:4004/api/sensor/
+
+###
+DELETE http://localhost:4004/api/sensor/data/delete?sensorId=184,185

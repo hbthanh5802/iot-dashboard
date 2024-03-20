@@ -4,6 +4,8 @@ const sensorController = require('../controllers/sensor.controller');
 
 // GET data sensors
 router.get('/data', sensorController.getDataSensor);
+// DELETE data sensors
+router.delete('/data/delete', sensorController.deleteDataSensor);
 // CREATE a ne sensor
 router.post('/create', sensorController.createNew);
 // GET a sensor info

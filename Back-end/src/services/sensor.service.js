@@ -70,7 +70,7 @@ sensorServices.saveSensorData = async (payload) => {
   const { sensorId, temperature, humidity, brightness } = payload;
   const response = {
     statusCode: 201,
-    message: 'Success to add device',
+    message: 'Success to save data sensor',
     data: {},
   };
   try {
@@ -91,7 +91,7 @@ sensorServices.saveSensorData = async (payload) => {
   } catch (error) {
     console.error('Error request:', error);
     response.statusCode = 500;
-    response.message = 'Failed to add device';
+    response.message = 'Failed to  save data sensor';
     throw error;
   }
   return response;
@@ -181,6 +181,37 @@ sensorServices.fetchSensorDataByCriteria = async (payload) => {
   } catch (error) {
     response.statusCode = 500;
     response.message = 'Failed to get data sensor';
+    throw error;
+  }
+  return response;
+};
+
+sensorServices.removeSensorData = async (payload) => {
+  const { dataId } = payload;
+  const response = {
+    statusCode: 200,
+    message: 'Success to delete data sensor',
+    data: {},
+  };
+  try {
+    if (!Array.isArray(dataId)) {
+      response.statusCode = 422;
+      response.message = 'The dataId is invalid';
+      throw new Error(response.message);
+    } else {
+      const results = await DataSensorModel.destroy({
+        where: {
+          id: {
+            [Op.in]: dataId,
+          },
+        },
+      });
+      response.data = results;
+    }
+  } catch (error) {
+    console.error('Error request:', error);
+    response.statusCode = 500;
+    response.message = 'Failed to delete data sensor';
     throw error;
   }
   return response;
