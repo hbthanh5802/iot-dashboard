@@ -117,7 +117,16 @@ mqttClient.on('message', function (topic, message) {
       saveSensorData(messageObj)
         .then((response) => {
           if (response.statusCode === 201) {
-            _socket?.emit('sensorData', JSON.stringify(response?.data));
+            // _socket?.emit('sensorData', JSON.stringify(response?.data));
+            io.emit(
+              'sensorData',
+              JSON.stringify({
+                temperature: (Math.random() * 100 + 1).toFixed(2),
+                humidity: (Math.random() * 100 + 1).toFixed(2),
+                brightness: (Math.random() * 1023 + 1).toFixed(2),
+                createdAt: new Date().toISOString(),
+              })
+            );
           }
         })
         .catch((error) => {})

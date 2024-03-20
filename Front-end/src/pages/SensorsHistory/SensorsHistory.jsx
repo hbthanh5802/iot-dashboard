@@ -45,7 +45,10 @@ function SensorsHistory() {
   const [loading, setLoading] = useState(false);
   const [sensorData, setSensorData] = useState([]);
   const [pagination, setPagination] = useState({});
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState({
+    orderBy: 'createdAt',
+    direction: 'DESC',
+  });
 
   useEffect(() => {
     const fetchSensorData = async () => {

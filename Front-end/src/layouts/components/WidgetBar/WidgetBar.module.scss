@@ -183,4 +183,8 @@
   }
 }
 
-// Dark mode
+@media screen and (max-width: 1023px) {
+  .wrapper {
+    grid-template-columns: repeat(auto-fit, minmax(48%, 1fr)) !important;
+  }
+}

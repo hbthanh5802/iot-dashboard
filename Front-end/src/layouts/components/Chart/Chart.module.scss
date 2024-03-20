@@ -6,11 +6,19 @@
   justify-content: center;
   max-height: 100%;
   margin-top: 24px;
+  position: relative;
+}
+
+.slide-data-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 .chart {
   width: 100%;
   max-height: 95%;
+  min-height: 500px;
 }
 
 .wrapper.dark {

@@ -46,7 +46,7 @@ function Sidebar() {
 
   const handleLightClick = useCallback(
     (mode, _save) => {
-      console.log('Save', _save);
+      // console.log('Save', _save);
       const data = {
         deviceId: 'D2',
         action: mode,
@@ -106,11 +106,9 @@ function Sidebar() {
         // console.log(fanResponse, lightResponse);
         if (fanResponse?.data?.length > 0) {
           handleFanClick(fanResponse.data[0].action === 'ON' ? true : false, false);
-          // setIsFanOn(fanResponse.data[0].action === 'ON' ? true : false);
         }
         if (lightResponse?.data?.length > 0) {
           handleLightClick(lightResponse.data[0].action === 'ON' ? true : false, false);
-          // setIsLightOn(lightResponse.data[0].action === 'ON' ? true : false);
         }
       })
       .catch(([fanError, lightError]) => {
@@ -182,7 +180,7 @@ function Sidebar() {
               </animated.div>
             </span>
             <div className={cx('control-btn')}>
-              <SwitchButton mode={isFanOn} onClick={handleFanClick} />
+              <SwitchButton title={'Change the Fan mode'} mode={isFanOn} onClick={handleFanClick} />
             </div>
           </div>
           <div className={cx('control')}>
@@ -196,7 +194,7 @@ function Sidebar() {
               )}
             </span>
             <div className={cx('control-btn')}>
-              <SwitchButton mode={isLightOn} onClick={handleLightClick} />
+              <SwitchButton title={'Change the Light mode'} mode={isLightOn} onClick={handleLightClick} />
             </div>
           </div>
         </div>

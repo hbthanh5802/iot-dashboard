@@ -4,9 +4,8 @@ import classNames from 'classnames/bind';
 import styles from './ActionHistory.module.scss';
 import CustomTable from '@/components/CustomTable';
 import deviceServices from '@/services/deviceServices';
-import * as time from '@/utils/time';
 
-import { Select, Tag } from 'antd';
+import { Tag } from 'antd';
 
 const cx = classNames.bind(styles);
 
@@ -39,7 +38,10 @@ function SensorsHistory() {
   const [loading, setLoading] = useState(false);
   const [actionData, setActionData] = useState([]);
   const [pagination, setPagination] = useState({});
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState({
+    orderBy: 'createdAt',
+    direction: 'DESC',
+  });
   // Action filter
   const handleChangeFilter = useCallback(
     (action) => {
@@ -49,8 +51,8 @@ function SensorsHistory() {
         const { action, ...otherFilters } = filters;
         setFilters({ ...otherFilters });
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [JSON.stringify(filters)],
   );
 
