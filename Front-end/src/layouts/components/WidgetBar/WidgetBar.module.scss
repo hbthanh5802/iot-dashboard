@@ -68,14 +68,14 @@
   }
 }
 
-.card {
+.card.humidity {
   &.normal {
     * {
       color: var(--light) !important;
     }
 
-    background: -webkit-gradient(linear, left top, right top, from(#84d9d2), to(#07cdae)) !important;
-    background: linear-gradient(to right, #84d9d2, #07cdae) !important;
+    background: -webkit-gradient(linear, left top, right top, from(#abc7ff), to(#c1e3ff)) !important;
+    background: linear-gradient(to right, #abc7ff, #c1e3ff) !important;
   }
 
   &.semi-medium {
@@ -83,8 +83,8 @@
       color: var(--light) !important;
     }
 
-    background: -webkit-gradient(linear, left top, right top, from(#90caf9), color-stop(99%, #047edf)) !important;
-    background: linear-gradient(to right, #90caf9, #047edf 99%) !important;
+    background: -webkit-gradient(linear, left top, right top, from(#6cacff), color-stop(99%, #8debff)) !important;
+    background: linear-gradient(to right, #6cacff, #8debff 99%) !important;
   }
 
   &.medium {
@@ -92,8 +92,46 @@
       color: var(--gray-100) !important;
     }
 
-    background: -webkit-gradient(linear, left top, right top, from(#f6e384), to(#ffd500)) !important;
-    background: linear-gradient(to right, #f6e384, #ffd500) !important;
+    background: -webkit-gradient(linear, left top, right top, from(#5583ee), to(#41d8dd)) !important;
+    background: linear-gradient(to right, #5583ee, #41d8dd) !important;
+  }
+
+  &.high {
+    * {
+      color: var(--light) !important;
+    }
+
+    background: -webkit-gradient(linear, left top, right top, from(#a16bfe), to(#deb0df)) !important;
+    background: linear-gradient(to right, #a16bfe, #deb0df) !important;
+  }
+}
+
+.card.temperature {
+  &.normal {
+    * {
+      color: var(--light) !important;
+    }
+
+    background: -webkit-gradient(linear, left top, right top, from(#a16bfe), to(#deb0df)) !important;
+    background: linear-gradient(to right, #a16bfe, #deb0df) !important;
+  }
+
+  &.semi-medium {
+    * {
+      color: var(--light) !important;
+    }
+
+    background: -webkit-gradient(linear, left top, right top, from(#d279ee), color-stop(99%, #f8c390)) !important;
+    background: linear-gradient(to right, #d279ee, #f8c390 99%) !important;
+  }
+
+  &.medium {
+    * {
+      color: var(--gray-100) !important;
+    }
+
+    background: -webkit-gradient(linear, left top, right top, from(#f78fad), to(#fdeb82)) !important;
+    background: linear-gradient(to right, #f78fad, #fdeb82) !important;
   }
 
   &.high {
@@ -103,6 +141,45 @@
 
     background: -webkit-gradient(linear, left top, right top, from(#ffbf96), to(#fe7096)) !important;
     background: linear-gradient(to right, #ffbf96, #fe7096) !important;
+  }
+}
+
+.card.brightness {
+  &.normal {
+    * {
+      color: var(--light) !important;
+    }
+
+    background: -webkit-gradient(linear, left top, right top, from(#41c7af), to(#54e38e)) !important;
+    background: linear-gradient(to right, #41c7af, #54e38e) !important;
+  }
+
+  &.semi-medium {
+    * {
+      color: var(--light) !important;
+    }
+
+    background: -webkit-gradient(linear, left top, right top, from(#d279ee), color-stop(99%, #f8c390)) !important;
+    background: linear-gradient(to right, #d279ee, #f8c390 99%) !important;
+  }
+
+  &.medium {
+    * {
+      color: var(--gray-100) !important;
+    }
+
+    background: -webkit-gradient(linear, left top, right top, from(#f78fad), to(#fdeb82)) !important;
+    background: linear-gradient(to right, #f78fad, #fdeb82) !important;
+  }
+
+  &.high {
+    * {
+      color: var(--light) !important;
+    }
+
+    background-color: #fad961;
+    background: -webkit-gradient(linear, left top, right top, from(#fad961), to(#f76b1c)) !important;
+    background: linear-gradient(to right, #fad961, #f76b1c) !important;
   }
 }
 

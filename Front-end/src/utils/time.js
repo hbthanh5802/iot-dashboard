@@ -11,9 +11,9 @@ export function isDateInRange(date, startDate, endDate) {
 }
 
 export function formatToCustomFormat(date, formatStr) {
-  const isoString = date.toISOString();
+  // const isoString = date.toISOString();
   if (!formatStr) formatStr = 'dddd, DD/MM/yyyy HH:mm:ss';
-  return moment(isoString).format(formatStr);
+  return moment(date).format(formatStr);
 }
 
 export function getRandomDate(startDate, endDate) {

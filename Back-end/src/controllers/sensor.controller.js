@@ -91,13 +91,24 @@ io.on('connection', (socket) => {
   console.log('Client is connected');
 
   _socket = socket;
+  // const sendMessage = setInterval(() => {
+  //   io.emit(
+  //     'sensorData2',
+  //     JSON.stringify({
+  //       temperature: (Math.random() * 100 + 1).toFixed(2),
+  //       humidity: (Math.random() * 100 + 1).toFixed(2),
+  //       brightness: (Math.random() * 1023 + 1).toFixed(2),
+  //       createdAt: new Date().toISOString(),
+  //     })
+  //   );
+  // }, 5000);
 
   socket.on('disconnect', () => {
     console.log('Client is disconnected');
+    // clearInterval(sendMessage);
   });
 });
 
-// mqttClient.on('message', function (topic, message) {
 mqttClient.on('message', function (topic, message) {
   if (mqttClient.connected) {
     const messageObj = JSON.parse(message);
@@ -107,7 +118,6 @@ mqttClient.on('message', function (topic, message) {
         .then((response) => {
           if (response.statusCode === 201) {
             _socket?.emit('sensorData', JSON.stringify(response?.data));
-            _socket?.emit('sensorData2', JSON.stringify(response?.data));
           }
         })
         .catch((error) => {})

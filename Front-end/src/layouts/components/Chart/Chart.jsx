@@ -1,6 +1,5 @@
 import classNames from 'classnames/bind';
-import socketIOClient from 'socket.io-client';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -15,38 +14,69 @@ import { Line } from 'react-chartjs-2';
 
 import styles from './Chart.module.scss';
 import { ThemeContext } from '@/contexts/ThemeContext';
+import * as timeHelper from '@/utils/time';
 
 const cx = classNames.bind(styles);
-const ENDPOINT = `http://127.0.0.1:4004`;
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-function Chart() {
+function Chart({ socketClient }) {
   const { dark } = useContext(ThemeContext);
-  const labels = ['10:00:01', '10:00:02', '10:00:03', '10:00:04', '10:00:05'];
-  const data = {
-    labels,
+  const [chartLabel, setChartLabel] = useState([]);
+  const [currentData, setCurrentData] = useState([]);
+
+  const [chartData, setChartData] = useState({
+    labels: chartLabel,
     datasets: [
       {
         label: 'Temperature',
-        data: labels.map(() => Math.ceil(Math.random() * 101)),
+        data: currentData.length > 0 ? currentData?.map((dataItem) => dataItem.temperature) : [],
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
       },
       {
         label: 'Moisture',
-        data: labels.map(() => Math.ceil(Math.random() * 101)),
+        data: currentData.length > 0 ? currentData?.map((dataItem) => dataItem.humidity) : [],
         borderColor: 'rgb(53, 162, 235)',
         backgroundColor: 'rgba(53, 162, 235, 0.5)',
       },
       {
         label: 'Brightness',
-        data: labels.map(() => Math.ceil(Math.random() * 101)),
+        data: currentData.length > 0 ? currentData?.map((dataItem) => dataItem.brightness) : [],
         borderColor: 'rgb(242, 166, 84)',
         backgroundColor: 'rgba(242, 166, 84, 0.5)',
       },
     ],
-  };
+  });
+
+  useEffect(() => {
+    const dataset = {
+      labels: chartLabel,
+      datasets: [
+        {
+          label: 'Temperature',
+          data: currentData.length > 0 ? currentData?.map((dataItem) => dataItem.temperature) : [],
+          borderColor: 'rgb(255, 99, 132)',
+          backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        },
+        {
+          label: 'Moisture',
+          data: currentData.length > 0 ? currentData?.map((dataItem) => dataItem.humidity) : [],
+          borderColor: 'rgb(53, 162, 235)',
+          backgroundColor: 'rgba(53, 162, 235, 0.5)',
+        },
+        {
+          label: 'Brightness',
+          data: currentData.length > 0 ? currentData?.map((dataItem) => dataItem.brightness) : [],
+          borderColor: 'rgb(242, 166, 84)',
+          backgroundColor: 'rgba(242, 166, 84, 0.5)',
+        },
+      ],
+    };
+    setChartData(dataset);
+  }, [chartLabel, currentData]);
+
+  // console.log('data', chartData);
 
   const options = {
     responsive: true,
@@ -61,20 +91,28 @@ function Chart() {
     },
   };
 
-  // useEffect(() => {
-  //   const socket = socketIOClient(ENDPOINT, { transports: ['websocket', 'polling', 'flashsocket'] });
-  //   socket.on('sensorData2', (data) => {
-  //     console.log(JSON.parse(data));
-  //     const sensorData = JSON.parse(data);
-  //   });
-  //   return () => {
-  //     socket.disconnect();
-  //   };
-  // }, []);
+  useEffect(() => {
+    socketClient?.on('sensorData', (data) => {
+      const sensorData = JSON.parse(data);
+      setChartLabel((prev) => [...prev, timeHelper.formatToCustomFormat(sensorData.createdAt, 'hh:mm:ss')]);
+      setCurrentData((prev) => {
+        const { temperature, humidity, brightness } = sensorData;
+        const tempData = {
+          temperature: +temperature,
+          humidity: +humidity,
+          brightness: +brightness,
+        };
+        return [...prev, { ...tempData }];
+      });
+    });
+    // return () => {
+    // socketClient?.disconnect();
+    // };
+  }, [socketClient]);
 
   return (
     <div className={cx('wrapper', { dark })}>
-      <Line className={cx('chart')} options={options} data={data} />
+      <Line className={cx('chart')} options={options} data={chartData} />
     </div>
   );
 }

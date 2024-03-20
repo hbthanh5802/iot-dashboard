@@ -1,6 +1,7 @@
 /* eslint-disable no-useless-computed-key */
+import { memo, useContext, useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
-import socketIOClient from 'socket.io-client';
+// import socketIOClient from 'socket.io-client';
 
 import styles from './WidgetBar.module.scss';
 import images from '@/assets/images';
@@ -15,37 +16,35 @@ import { TbWashTemperature3 as HumidityMedium } from 'react-icons/tb';
 import { TbWashTemperature6 as HumidityHigh } from 'react-icons/tb';
 // Light
 import { FaCloud as LightNormal } from 'react-icons/fa6';
-import { useContext, useEffect, useState } from 'react';
-import { MdSunny as LightMedium } from 'react-icons/md';
-import { IoPartlySunny as LightHigh } from 'react-icons/io5';
+import { MdSunny as LightHigh } from 'react-icons/md';
+import { IoPartlySunny as LightMedium } from 'react-icons/io5';
 
 const cx = classNames.bind(styles);
-const ENDPOINT = `http://localhost:4004`; // Địa chỉ của server socket
 
-function WidgetBar() {
+function WidgetBar({ socketClient }) {
   const { dark } = useContext(ThemeContext);
-  const [temperature, setTemperature] = useState(32);
-  const [humidity, setMoisture] = useState(8);
-  const [brightness, setBrightness] = useState(109);
+  const [temperature, setTemperature] = useState(99);
+  const [humidity, setMoisture] = useState(99);
+  const [brightness, setBrightness] = useState(999);
 
   useEffect(() => {
-    const socket = socketIOClient(ENDPOINT, { transports: ['websocket', 'polling', 'flashsocket'] });
-    socket.on('sensorData', (data) => {
-      // console.log(JSON.parse(data));
+    // const socket = socketIOClient(ENDPOINT, { transports: ['websocket', 'polling', 'flashsocket'] });
+    socketClient?.on('sensorData', (data) => {
+      // console.log('Widget', data);
       const sensorData = JSON.parse(data);
       setTemperature(+sensorData?.temperature);
       setMoisture(+sensorData?.humidity);
       setBrightness(+sensorData?.brightness);
     });
     return () => {
-      socket.disconnect();
+      socketClient?.disconnect();
     };
-  }, []);
+  }, [socketClient]);
 
   return (
     <div className={cx('wrapper', { dark })}>
       <div
-        className={cx('card', {
+        className={cx('card', 'temperature', {
           normal: 0 <= temperature && temperature < 25,
           ['semi-medium']: 25 <= temperature && temperature < 50,
           medium: 50 <= temperature && temperature < 75,
@@ -62,12 +61,12 @@ function WidgetBar() {
         </div>
         <div className={cx('card-icon')}>
           <span>
-            <TemperatureNormal />
+            {temperature < 33 ? <TemperatureNormal /> : temperature < 66 ? <TemperatureMedium /> : <TemperatureHigh />}
           </span>
         </div>
       </div>
       <div
-        className={cx('card', {
+        className={cx('card', 'humidity', {
           normal: 0 <= humidity && humidity < 25,
           ['semi-medium']: 25 <= humidity && humidity < 50,
           medium: 50 <= humidity && humidity < 75,
@@ -83,13 +82,11 @@ function WidgetBar() {
           </p>
         </div>
         <div className={cx('card-icon')}>
-          <span>
-            <HumidityNormal />
-          </span>
+          <span>{humidity < 33 ? <HumidityNormal /> : humidity < 66 ? <HumidityMedium /> : <HumidityHigh />}</span>
         </div>
       </div>
       <div
-        className={cx('card', {
+        className={cx('card', 'brightness', {
           normal: 0 <= brightness && brightness < 200,
           ['semi-medium']: 200 <= brightness && brightness < 400,
           medium: 400 <= brightness && brightness < 600,
@@ -105,13 +102,11 @@ function WidgetBar() {
           </p>
         </div>
         <div className={cx('card-icon')}>
-          <span>
-            <LightNormal />
-          </span>
+          <span>{brightness < 333 ? <LightNormal /> : brightness < 666 ? <LightMedium /> : <LightHigh />}</span>
         </div>
       </div>
     </div>
   );
 }
 
-export default WidgetBar;
+export default memo(WidgetBar);
