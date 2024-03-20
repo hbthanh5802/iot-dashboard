@@ -75,7 +75,7 @@ function WidgetBar({ socketClient }) {
       >
         <img className={cx('card-circle')} src={images.circleSvg} alt="circle" />
         <div className={cx('card-info')}>
-          <h3 className={cx('card-header')}>Moisture</h3>
+          <h3 className={cx('card-header')}>Humidity</h3>
           <p className={cx('card-number')}>
             {humidity}
             <span>%</span>

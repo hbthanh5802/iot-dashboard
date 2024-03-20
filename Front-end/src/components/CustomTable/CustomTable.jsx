@@ -335,7 +335,7 @@ function CustomTable({ data, columns, title, paginationData, handlePageChange, l
                 onChange={(value) => setOrderFilter((prev) => ({ ...prev, direction: value }))}
               />
             </Space.Compact>
-            <Tooltip title="search">
+            <Tooltip title="Apply and Search">
               <Button
                 className="ctTable-search-btn"
                 onClick={handleSearch}
