@@ -212,11 +212,12 @@ function CustomTable({ data, columns, title, paginationData, handlePageChange, l
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       console.log(selectedRows);
+      otherProps?.handleDeleteChange(selectedRows.map((selectedItem) => selectedItem?.id));
       setSelectedData(selectedRows.length > 0 ? selectedRows : data);
     },
-    getCheckboxProps: (record) => ({
-      name: record.id,
-    }),
+    // getCheckboxProps: (record) => ({
+    //   name: record.id,
+    // }),
   };
 
   const handleSearch = () => {
@@ -288,7 +289,7 @@ function CustomTable({ data, columns, title, paginationData, handlePageChange, l
                       width: 150,
                     }}
                     options={actionFilterOption}
-                    onChange={(value) => otherProps.handleChangeFilter(value)}
+                    onChange={(value) => otherProps?.handleChangeActionFilter(value)}
                   />
                 </>
               </Tooltip>
@@ -354,7 +355,7 @@ function CustomTable({ data, columns, title, paginationData, handlePageChange, l
           value={checkedColumnList}
           options={checkColumnOptions}
           onChange={(value) => {
-            console.log(value);
+            console.log('Log in renderTableFooter', value);
             setCheckedColumnList(value);
           }}
         />
@@ -443,6 +444,7 @@ function CustomTable({ data, columns, title, paginationData, handlePageChange, l
             footer={renderTableFooter}
             rowSelection={{
               type: 'checkbox',
+              selectedRowKeys: loading === true ? [] : undefined,
               ...rowSelection,
             }}
             pagination={{
@@ -476,8 +478,16 @@ function CustomTable({ data, columns, title, paginationData, handlePageChange, l
               }}
               icon={<RiToolsFill />}
             >
-              <FloatButton icon={<MdDeleteForever style={{ fill: 'red' }} />} tooltip={'Delete'} />
-              <FloatButton icon={<LuRefreshCw />} tooltip="Refresh" />
+              <FloatButton
+                icon={<MdDeleteForever style={{ fill: 'red' }} />}
+                tooltip={'Delete'}
+                onClick={otherProps?.handleDeleteDataSensor}
+              />
+              <FloatButton
+                icon={<LuRefreshCw />}
+                tooltip="Refresh"
+                onClick={() => handlePageChange({ ...filterData, refresh: Math.random() * 100 })}
+              />
             </FloatButton.Group>
           </>
         </ConfigProvider>

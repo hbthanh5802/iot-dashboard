@@ -48,4 +48,20 @@ deviceServices.getDataAction = async ({ method, token, data, params, path }) => 
   }
 };
 
+deviceServices.deleteActionData = async ({ method, token, data, params, path }) => {
+  let response;
+  try {
+    response = await sendRequest({
+      method: 'DELETE',
+      data,
+      token,
+      path: `/device/action/delete`,
+      params,
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export default deviceServices;

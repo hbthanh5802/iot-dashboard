@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import classNames from 'classnames/bind';
 
+import { message } from 'antd';
+
 import styles from './ActionHistory.module.scss';
 import CustomTable from '@/components/CustomTable';
 import deviceServices from '@/services/deviceServices';
@@ -35,6 +37,7 @@ const columns = [
 ];
 
 function SensorsHistory() {
+  const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState(false);
   const [actionData, setActionData] = useState([]);
   const [pagination, setPagination] = useState({});
@@ -43,7 +46,7 @@ function SensorsHistory() {
     direction: 'DESC',
   });
   // Action filter
-  const handleChangeFilter = useCallback(
+  const handleChangeActionFilter = useCallback(
     (action) => {
       if (action) {
         setFilters((prev) => ({ ...prev, action }));
@@ -55,6 +58,30 @@ function SensorsHistory() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [JSON.stringify(filters)],
   );
+  const [deleteList, setDeleteList] = useState([]);
+  const handleDeleteChange = useCallback((idList) => setDeleteList(idList), []);
+  const handleDeleteDataSensor = useCallback(async () => {
+    if (deleteList.length === 0) {
+      messageApi.info('NONE selected sensor data!');
+      return;
+    }
+    const params = {
+      dataId: deleteList?.join(','),
+    };
+    messageApi.loading('Deleting...', [0.25]);
+    await deviceServices
+      .deleteActionData({ params })
+      .then((response) => {
+        if (response?.statusCode === 200) {
+          messageApi.success('SUCCEED to DELETE selected action data');
+          setFilters({ ...filters, refresh: Math.random() * 100 });
+        }
+      })
+      .catch((error) => {
+        messageApi.error('FAILED to DELETE selected action data!');
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deleteList, messageApi]);
 
   useEffect(() => {
     const fetchSensorData = async () => {
@@ -80,18 +107,23 @@ function SensorsHistory() {
   }, []);
 
   return (
-    <div className={cx('wrapper')}>
-      <CustomTable
-        loading={loading}
-        title={'Actions History'}
-        data={actionData}
-        columns={columns}
-        paginationData={pagination}
-        handlePageChange={handlePageChange}
-        filterData={filters}
-        handleChangeFilter={handleChangeFilter}
-      />
-    </div>
+    <>
+      {contextHolder}
+      <div className={cx('wrapper')}>
+        <CustomTable
+          loading={loading}
+          title={'Actions History'}
+          data={actionData}
+          columns={columns}
+          paginationData={pagination}
+          handlePageChange={handlePageChange}
+          filterData={filters}
+          handleChangeActionFilter={handleChangeActionFilter}
+          handleDeleteChange={handleDeleteChange}
+          handleDeleteDataSensor={handleDeleteDataSensor}
+        />
+      </div>
+    </>
   );
 }
 
