@@ -21,7 +21,7 @@ function Sidebar() {
   const [isLightOn, setIsLightOn] = useState(false);
 
   const handleFanClick = useCallback(
-    (mode, _save) => {
+    ({ mode, _save, allowNotify }) => {
       const data = {
         deviceId: 'D1',
         action: mode,
@@ -32,12 +32,12 @@ function Sidebar() {
         .updateDeviceStatus({ data })
         .then((response) => {
           console.log('response', response);
-          messageApi.success(`Succeed to ${!mode ? 'TURN OFF' : 'TURN ON'} THE FAN`);
+          if (allowNotify) messageApi.success(`Succeed to ${!mode ? 'TURN OFF' : 'TURN ON'} THE FAN`);
           setIsFanOn(mode);
         })
         .catch((error) => {
           console.log('error', error);
-          messageApi.error(`Failed to ${!mode ? 'TURN OFF' : 'TURN ON'} THE FAN`);
+          if (allowNotify) messageApi.error(`Failed to ${!mode ? 'TURN OFF' : 'TURN ON'} THE FAN`);
           setIsFanOn(!mode);
         });
     },
@@ -45,7 +45,7 @@ function Sidebar() {
   );
 
   const handleLightClick = useCallback(
-    (mode, _save) => {
+    ({ mode, _save, allowNotify }) => {
       // console.log('Save', _save);
       const data = {
         deviceId: 'D2',
@@ -56,12 +56,12 @@ function Sidebar() {
         .updateDeviceStatus({ data })
         .then((response) => {
           console.log('response', response);
-          messageApi.success(`Succeed to ${!mode ? 'TURN OFF' : 'TURN ON'} THE LIGHT`);
+          if (allowNotify) messageApi.success(`Succeed to ${!mode ? 'TURN OFF' : 'TURN ON'} THE LIGHT`);
           setIsLightOn(mode);
         })
         .catch((error) => {
           console.log('error', error);
-          messageApi.error(`Failed to ${!mode ? 'TURN OFF' : 'TURN ON'} THE LIGHT`);
+          if (allowNotify) messageApi.error(`Failed to ${!mode ? 'TURN OFF' : 'TURN ON'} THE LIGHT`);
           setIsLightOn(!mode);
         });
     },
@@ -105,10 +105,10 @@ function Sidebar() {
       .then(([fanResponse, lightResponse]) => {
         // console.log(fanResponse, lightResponse);
         if (fanResponse?.data?.length > 0) {
-          handleFanClick(fanResponse.data[0].action === 'ON' ? true : false, false);
+          handleFanClick({ mode: fanResponse.data[0].action === 'ON' ? true : false, _save: false });
         }
         if (lightResponse?.data?.length > 0) {
-          handleLightClick(lightResponse.data[0].action === 'ON' ? true : false, false);
+          handleLightClick({ mode: lightResponse.data[0].action === 'ON' ? true : false, _save: false });
         }
       })
       .catch(([fanError, lightError]) => {

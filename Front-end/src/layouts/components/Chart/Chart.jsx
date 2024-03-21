@@ -9,8 +9,10 @@ import {
   Title,
   Tooltip,
   Legend,
+  Filler,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import { message } from 'antd';
 
 import styles from './Chart.module.scss';
 import { ThemeContext } from '@/contexts/ThemeContext';
@@ -19,10 +21,11 @@ import SwitchButton from '@/components/SwitchButton';
 
 const cx = classNames.bind(styles);
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
 function Chart({ socketClient }) {
   const { dark } = useContext(ThemeContext);
+  const [messageApi, contextHolder] = message.useMessage();
   const [chartLabel, setChartLabel] = useState([]);
   const [currentData, setCurrentData] = useState([]);
   const [isSlideData, setIsSlide] = useState(() => {
@@ -34,18 +37,21 @@ function Chart({ socketClient }) {
     labels: chartLabel,
     datasets: [
       {
+        fill: true,
         label: 'Temperature',
         data: currentData.length > 0 ? currentData?.map((dataItem) => dataItem.temperature) : [],
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
       },
       {
-        label: 'Moisture',
+        fill: true,
+        label: 'humidity',
         data: currentData.length > 0 ? currentData?.map((dataItem) => dataItem.humidity) : [],
         borderColor: 'rgb(53, 162, 235)',
         backgroundColor: 'rgba(53, 162, 235, 0.5)',
       },
       {
+        fill: false,
         label: 'Brightness',
         data: currentData.length > 0 ? currentData?.map((dataItem) => dataItem.brightness) : [],
         borderColor: 'rgb(242, 166, 84)',
@@ -59,18 +65,21 @@ function Chart({ socketClient }) {
       labels: chartLabel,
       datasets: [
         {
+          fill: true,
           label: 'Temperature',
           data: currentData.length > 0 ? currentData?.map((dataItem) => +dataItem.temperature) : [],
           borderColor: 'rgb(255, 99, 132)',
           backgroundColor: 'rgba(255, 99, 132, 0.5)',
         },
         {
+          fill: true,
           label: 'Moisture',
           data: currentData.length > 0 ? currentData?.map((dataItem) => +dataItem.humidity) : [],
           borderColor: 'rgb(53, 162, 235)',
           backgroundColor: 'rgba(53, 162, 235, 0.5)',
         },
         {
+          fill: false,
           label: 'Brightness',
           data: currentData.length > 0 ? currentData?.map((dataItem) => +dataItem.brightness) : [],
           borderColor: 'rgb(242, 166, 84)',
@@ -101,10 +110,14 @@ function Chart({ socketClient }) {
     setIsSlide(slideData && slideData === 'false' ? false : true);
   }, []);
 
-  const handleChangeSlideData = useCallback((mode) => {
-    localStorage.setItem('isSlideData', mode);
-    setIsSlide(mode);
-  }, []);
+  const handleChangeSlideData = useCallback(
+    ({ mode }) => {
+      localStorage.setItem('isSlideData', mode);
+      messageApi.info(`Automatic slice data is ${mode ? 'ON' : 'OFF'}`);
+      setIsSlide(mode);
+    },
+    [messageApi],
+  );
 
   useEffect(() => {
     socketClient?.on('sensorData', (data) => {
@@ -119,19 +132,22 @@ function Chart({ socketClient }) {
   }, [socketClient]);
 
   useEffect(() => {
-    if (isSlideData && chartLabel.length > 10) {
-      setChartLabel([...chartLabel.slice(chartLabel.length - 10)]);
-      setCurrentData([...currentData.slice(currentData.length - 10)]);
+    if (isSlideData && chartLabel.length > 25) {
+      setChartLabel([...chartLabel.slice(chartLabel.length - 25)]);
+      setCurrentData([...currentData.slice(currentData.length - 25)]);
     }
   }, [isSlideData, currentData, chartLabel]);
 
   return (
-    <div className={cx('wrapper', { dark })}>
-      <div className={cx('slide-data-btn')}>
-        <SwitchButton onClick={handleChangeSlideData} mode={isSlideData} title={'Click to slide the data in Chart'} />
+    <>
+      {contextHolder}
+      <div className={cx('wrapper', { dark })}>
+        <div className={cx('slide-data-btn')}>
+          <SwitchButton onClick={handleChangeSlideData} mode={isSlideData} title={'Click to slide the data in Chart'} />
+        </div>
+        <Line className={cx('chart')} options={options} data={chartData} />
       </div>
-      <Line className={cx('chart')} options={options} data={chartData} />
-    </div>
+    </>
   );
 }
 

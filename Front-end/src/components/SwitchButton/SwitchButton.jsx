@@ -10,7 +10,7 @@ const cx = classNames.bind(styles);
 function SwitchButton({ mode, onClick, title }) {
   const { dark } = useContext(ThemeContext);
   return (
-    <div className={cx('wrapper', { dark })} onClick={() => onClick(!mode, true)}>
+    <div className={cx('wrapper', { dark })} onClick={() => onClick({ mode: !mode, _save: true, allowNotify: true })}>
       <Tooltip title={title} placement="leftTop">
         <div className={cx('switch-btn')}>
           <input type="checkbox" checked={mode} readOnly />

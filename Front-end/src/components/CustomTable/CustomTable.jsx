@@ -479,7 +479,8 @@ function CustomTable({ data, columns, title, paginationData, handlePageChange, l
               icon={<RiToolsFill />}
             >
               <FloatButton
-                icon={<MdDeleteForever style={{ fill: 'red' }} />}
+                className="test"
+                icon={<MdDeleteForever className="ctTable-float-delete-btn" />}
                 tooltip={'Delete'}
                 onClick={otherProps?.handleDeleteDataSensor}
               />
