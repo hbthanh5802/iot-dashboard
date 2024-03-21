@@ -7,7 +7,7 @@ const instance = axios.create({
   // },
 });
 
-async function sendRequest({ path, method, token = null, data = null, params = null }) {
+async function sendRequest({ path, method, token = null, data = null, params = null, allowLog }) {
   try {
     const configs = {
       method,
@@ -18,7 +18,7 @@ async function sendRequest({ path, method, token = null, data = null, params = n
       },
       data,
     };
-    console.log('configs', configs);
+    if (allowLog) console.log('configs', configs);
     const response = await instance.request(configs);
     return response.data;
   } catch (error) {

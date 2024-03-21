@@ -29,7 +29,7 @@ function Sidebar() {
       };
       messageApi.loading(`Waiting...`, [0.5]);
       deviceServices
-        .updateDeviceStatus({ data })
+        .updateDeviceStatus({ data, allowLog: allowNotify })
         .then((response) => {
           console.log('response', response);
           if (allowNotify) messageApi.success(`Succeed to ${!mode ? 'TURN OFF' : 'TURN ON'} THE FAN`);
@@ -53,7 +53,7 @@ function Sidebar() {
         _save,
       };
       deviceServices
-        .updateDeviceStatus({ data })
+        .updateDeviceStatus({ data, allowLog: allowNotify })
         .then((response) => {
           console.log('response', response);
           if (allowNotify) messageApi.success(`Succeed to ${!mode ? 'TURN OFF' : 'TURN ON'} THE LIGHT`);

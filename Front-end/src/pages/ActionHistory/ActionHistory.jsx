@@ -70,7 +70,7 @@ function SensorsHistory() {
     };
     messageApi.loading('Deleting...', [0.25]);
     await deviceServices
-      .deleteActionData({ params })
+      .deleteActionData({ params, allowLog: true })
       .then((response) => {
         if (response?.statusCode === 200) {
           messageApi.success('SUCCEED to DELETE selected action data');
@@ -88,7 +88,7 @@ function SensorsHistory() {
       let response;
       try {
         setLoading(true);
-        response = await deviceServices.getDataAction({ params: filters });
+        response = await deviceServices.getDataAction({ params: filters, allowLog: true });
         const dataAction = response.data.map((dataItem, index) => ({ ...dataItem, key: dataItem.id }));
         setActionData(dataAction);
         setPagination(response?.meta?.pagination);

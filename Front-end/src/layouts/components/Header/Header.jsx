@@ -1,6 +1,8 @@
-import { useContext, useId } from 'react';
+import { useContext, useEffect, useId, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import classNames from 'classnames/bind';
+
+import { Dropdown, Space, Tag, Tooltip } from 'antd';
 
 import styles from './Header.module.scss';
 import './DropdownMenu.scss';
@@ -9,14 +11,18 @@ import { FaMoon } from 'react-icons/fa';
 import { IoSunny } from 'react-icons/io5';
 import { TbPhotoSensor3 } from 'react-icons/tb';
 import { GrAction } from 'react-icons/gr';
+import { FaRegCircleCheck } from 'react-icons/fa6';
+import { MdOutlineCancel } from 'react-icons/md';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import NavItem from './NavItem';
-import { Dropdown, Space } from 'antd';
+
+import mqttServices from '@/services/mqttServices';
+
 // import SwitchButton from '@/components/SwitchButton';
 
 const cx = classNames.bind(styles);
 
-const items = [
+const historyItems = [
   {
     key: 'Sensors History',
     label: <NavItem className={cx('nav-link')} title={'Sensors'} to={'/history/sensors'} />,
@@ -35,21 +41,56 @@ function Header() {
   const themeId = useId();
   const location = useLocation();
   const { dark, handleToggleDark } = useContext(ThemeContext);
+  const [isMQTTConnected, setIsMQTTConnected] = useState(false);
+
+  useEffect(() => {
+    const checkStatusInterval = setInterval(() => {
+      mqttServices
+        .getStatus({ allowLog: false })
+        .then((response) => {
+          setIsMQTTConnected(response?.data?.isConnected);
+        })
+        .catch((error) => {
+          console.log(error);
+          setIsMQTTConnected(false);
+        });
+    }, 5000);
+    return () => {
+      clearInterval(checkStatusInterval);
+    };
+  });
 
   return (
     <div className={cx('wrapper', { dark })}>
-      <Link to={'/'} className={cx('title')}>
-        <span className={cx('title-icon')}>
-          <TiHome className={cx('icon')} />
-        </span>
-        Dashboard
-      </Link>
+      <Space>
+        <Link to={'/'} className={cx('title')}>
+          <span className={cx('title-icon')}>
+            <TiHome className={cx('icon')} />
+          </span>
+          <span className={cx('title-text')}>Dashboard</span>
+        </Link>
+        <Tooltip title="MQTT" placement="bottomRight">
+          <Tag
+            className={cx('status-tag')}
+            icon={
+              isMQTTConnected ? (
+                <FaRegCircleCheck className={cx('status-icon')} />
+              ) : (
+                <MdOutlineCancel className={cx('status-icon')} />
+              )
+            }
+            color={isMQTTConnected ? 'success' : 'error'}
+          >
+            {isMQTTConnected ? 'CONNECTED' : 'DISCONNECTED'}
+          </Tag>
+        </Tooltip>
+      </Space>
 
       <nav className={cx('nav')}>
         <Space size={'small'}>
           <Dropdown
             menu={{
-              items,
+              items: historyItems,
               selectable: true,
             }}
             placement="topRight"
