@@ -9,7 +9,7 @@ deviceServices.createDevice = async (payload) => {
   const { name, description, deviceId } = payload;
   const response = {
     statusCode: 201,
-    message: 'Success to add device',
+    message: 'Succeed to add device',
     data: {},
   };
   try {
@@ -29,7 +29,7 @@ deviceServices.createDevice = async (payload) => {
 deviceServices.fetchAll = async (payload) => {
   const response = {
     statusCode: 200,
-    message: 'Success to get a device',
+    message: 'Succeed to get all devices',
     data: {},
   };
   try {
@@ -39,7 +39,7 @@ deviceServices.fetchAll = async (payload) => {
   } catch (error) {
     console.error('Error request:', error);
     response.statusCode = 500;
-    response.message = 'Failed to get a device';
+    response.message = 'Failed to get all devices';
     throw error;
   }
   return response;
@@ -49,14 +49,17 @@ deviceServices.fetchDevice = async (payload) => {
   const { deviceId } = payload;
   const response = {
     statusCode: 200,
-    message: 'Success to get a device',
+    message: 'Succeed to get a device',
     data: {},
   };
   try {
     if (!deviceId) throw new Error('No deviceId found!');
     const device = await DeviceModel.findByPk(deviceId);
-    if (!device) response.message = 'No device found.';
-    else response.data = device;
+    if (!device) {
+      response.statusCode = 404;
+      response.message = 'No device found.';
+      return response;
+    } else response.data = device;
   } catch (error) {
     console.error('Error request:', error);
     response.statusCode = 500;
@@ -69,17 +72,18 @@ deviceServices.fetchDevice = async (payload) => {
 deviceServices.updateDevice = async (payload) => {
   const { name, description, deviceId } = payload;
   const response = {
-    statusCode: 201,
-    message: 'Success to update device',
+    statusCode: 200,
+    message: 'Succeed to update device',
     data: {},
   };
   try {
     const requirements = { name, description };
-    const device = await DeviceModel.update(requirements, {
+    let device = await DeviceModel.update(requirements, {
       where: {
         id: deviceId,
       },
     });
+    device = await DeviceModel.findByPk(deviceId);
     response.data = device;
   } catch (error) {
     console.error('Error request:', error);
@@ -94,7 +98,7 @@ deviceServices.updateDeviceStatus = async (payload) => {
   const { deviceId, action, _save } = payload;
   const response = {
     statusCode: 201,
-    message: 'Success to update device status',
+    message: 'Succeed to update device status',
     data: {},
   };
   try {
@@ -107,7 +111,8 @@ deviceServices.updateDeviceStatus = async (payload) => {
         const deviceHistory = await device.createDataAction(requirements);
         response.data = deviceHistory;
       } else {
-        response.message = 'Success to update device status but NOT SAVE';
+        response.statusCode = 200;
+        response.message = 'Succeed to update device status but NOT SAVE';
       }
     } else {
       response.statusCode = 404;
@@ -125,7 +130,7 @@ deviceServices.updateDeviceStatus = async (payload) => {
 deviceServices.fetchDataActionByCriteria = async (payload) => {
   const response = {
     statusCode: 200,
-    message: 'Success to get data device',
+    message: 'Succeed to get data device',
     data: {},
     meta: {},
   };

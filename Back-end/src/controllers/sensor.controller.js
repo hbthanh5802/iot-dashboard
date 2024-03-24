@@ -2,15 +2,17 @@ const sensorServices = require('../services/sensor.service');
 const { mqttClient, publishMessage } = require('../utils/mqttClient');
 const { useSocket } = require('../utils/socketClient.helper');
 const io = require('.././index');
+const { json } = require('body-parser');
 
 const sensorController = {};
 
 const saveSensorData = async (data) => {
   let response;
-  const { temperatureC, humidity, brightness } = data;
+  const { temperatureC, humidity, brightness, sensorId } = data;
   try {
+    if (!sensorId) sensorId = 'S1';
     const payload = {
-      sensorId: 'S1',
+      sensorId,
       temperature: temperatureC,
       humidity,
       brightness,
@@ -28,6 +30,13 @@ sensorController.createNew = async (req, res, next) => {
   const { sensorId, name, address } = req.body;
   try {
     const payload = { sensorId, name, address };
+    response = await sensorServices.fetchSensor(payload);
+    if (Object.keys(response.data).length !== 0) {
+      response.statusCode = 400;
+      response.message = 'Sensor already exists.';
+      delete response.data;
+      return res.status(400).json(response);
+    }
     response = await sensorServices.createSensor(payload);
     res.status(201).json(response);
   } catch (error) {
@@ -55,6 +64,32 @@ sensorController.getSensor = async (req, res, next) => {
     if (!sensorId) return res.sendStatus(422);
     const payload = { sensorId };
     response = await sensorServices.fetchSensor(payload);
+    if (Object.keys(response.data).length === 0) {
+      response.statusCode = 404;
+      delete response.data;
+      return res.status(404).json(response);
+    }
+    res.status(200).json(response);
+  } catch (error) {
+    console.log('Error request:', error);
+    res.status(500).json(response);
+    return next(error);
+  }
+};
+
+sensorController.updateSensor = async (req, res, next) => {
+  let response;
+  const { sensorId, name, address } = req.body;
+  try {
+    if (!sensorId) return res.sendStatus(422);
+    const payload = { sensorId, name, address };
+    response = await sensorServices.fetchSensor(payload);
+    if (Object.keys(response.data).length === 0) {
+      response.statusCode = 404;
+      delete response.data;
+      return res.status(404).json(response);
+    }
+    response = await sensorServices.updateSensor(payload);
     res.status(200).json(response);
   } catch (error) {
     console.log('Error request:', error);
@@ -135,7 +170,7 @@ mqttClient.on('message', function (topic, message) {
         .then((response) => {
           if (response.statusCode === 201) {
             // _socket?.emit('sensorData', JSON.stringify(response?.data));
-            io.emit(
+            _socket?.emit(
               'sensorData',
               JSON.stringify({
                 temperature: (Math.random() * 100 + 1).toFixed(2),

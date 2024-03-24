@@ -1,0 +1,908 @@
+openapi: 3.0.3
+info:
+  version: '1.0'
+  title: Iot Dashboard - MUL14154
+  description: |-
+    This project is a backend application developed using `Node.js` and `Express.js`, providing features such as communication via `MQTT protocol` and `WebSocket` using **Socket.IO**. It enables real-time data transmission from hardware sensors (**temperature, humidity, and light sensors**) and control of system devices.
+
+    Additionally, it allows access and monitoring of data and operations on the system, with all information stored in a database.
+    This is a sample Iot Dashboard Server based on the OpenAPI 3.0 specification.  You can find out more about this project via this link:
+    [Github](https://github.com/hbthanh5802/iot-dashboard)
+    ### Technologies Used
+    - **NodeJS, ExpressJs**
+    - **Mosquitto (MQTT protocol)**
+    - **Socket.IO**
+    - **MySQL**
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: hbthanh5802@gmail.com
+servers:
+  - url: http://localhost:4004/api
+tags:
+  - name: mqtt
+    description: Everything about `mosquitto` broker
+    externalDocs:
+      description: Find out more
+      url: https://mosquitto.org
+  - name: sensor
+    description: Everything about `sensors` and `sensor data`
+  - name: device
+    description: Everything about `devices` and `action data`
+paths:
+  /mqtt/status:
+    get:
+      tags:
+        - mqtt
+      summary: Get current status of mqtt
+      responses:
+        '200':
+          description: Succeed to current status of `mqtt`
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Succeed to current status of mqtt
+                  data:
+                    type: object
+                    properties:
+                      isConnected:
+                        type: boolean
+                        enum:
+                          - true
+                          - false
+  /sensor:
+    get:
+      tags:
+        - sensor
+      summary: Fetch all sensors
+      responses:
+        '200':
+          description: Succeed to get all sensors
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Succeed to get all sensors
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Sensor'
+  /sensor/{sensorId}:
+    get:
+      tags:
+        - sensor
+      summary: Fetch a sensor by sensorId
+      parameters:
+        - in: path
+          name: sensorId
+          required: true
+          description: ID of the sensor to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Succeed to get a sensor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Succeed to get a sensor
+                  data:
+                    $ref: '#/components/schemas/Sensor'
+        '404':
+          description: Get a sensor that doesn't exist in database.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: No sensor found.
+  /sensor/create:
+    post:
+      tags:
+        - sensor
+      summary: Create a new sensor
+      description: Create a new sensor
+      requestBody:
+        required: true
+        description: Set a new sensor
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sensorId:
+                  type: string
+                  example: 'S1'
+                name:
+                  type: string
+                  example: 'Thanh-Sensor'
+                address:
+                  type: string
+                  example: 'localhost-THANH'
+      responses:
+        '201':
+          description: Succeed to add sensor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: Succeed to add sensor
+                  data:
+                    $ref: '#/components/schemas/Sensor'
+        '400':
+          description: Add a sensor that already existed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Sensor already exists.
+  /sensor/update:
+    put:
+      tags:
+        - sensor
+      summary: Update an existing sensor
+      description: Update an existing sensor
+      requestBody:
+        required: true
+        description: Update an existing sensor
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sensorId:
+                  type: string
+                  example: 'S1'
+                name:
+                  type: string
+                  example: 'Thanh-Sensor'
+                address:
+                  type: string
+                  example: 'localhost-THANH'
+      responses:
+        '200':
+          description: Succeed to update sensor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Succeed to update sensor
+                  data:
+                    $ref: '#/components/schemas/Sensor'
+        '404':
+          description: Update a sensor that doesn't exist.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: No sensor found.
+  /sensor/data:
+    get:
+      tags:
+        - sensor
+      summary: Fetch data sensor.
+      description: Fetch data sensor by multiple criteria.
+      parameters:
+        - name: sensorId
+          in: query
+          required: false
+          description: The ID of the sensor to retrieve data for. If provided, the endpoint will return data for the sensor with this ID. If not provided, the endpoint will return data for all sensors.
+          schema:
+            type: string
+            default: 'S1'
+        - name: startDate
+          in: query
+          required: false
+          description: The start date/time for the data range. If provided, the endpoint will return data recorded after this date/time.
+          schema:
+            type: string
+            format: date-time
+            example: '2024-03-16 00:00:00'
+        - name: endDate
+          in: query
+          required: false
+          description: The end date/time for the data range. If provided, the endpoint will return data recorded before this date/time.
+          schema:
+            type: string
+            format: date-time
+            example: '2024-03-17 00:00:00'
+        - name: orderBy
+          in: query
+          required: false
+          description: The field to sort the results by.
+          schema:
+            type: string
+            enum:
+              - temperature
+              - humidity
+              - brightness
+              - createdAt
+        - name: direction
+          in: query
+          required: false
+          description: The direction of the sorting (ASC or DESC).
+          schema:
+            type: string
+            enum:
+              - ASC
+              - DESC
+        - name: page
+          in: query
+          required: false
+          description: The page number of the results.
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: pageSize
+          in: query
+          required: false
+          description: The number of results per page.
+          schema:
+            type: integer
+            minimum: 1
+            default: 10
+      responses:
+        '200':
+          description: Succeed to get data sensor. The response.data will be <mark>empty array</mark> if there isn't any records matching with all provided criteria.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Succeed to get data sensor
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 250
+                        temperature:
+                          type: number
+                          format: double
+                          example: 24.1
+                        humidity:
+                          type: integer
+                          example: 95
+                        brightness:
+                          type: integer
+                          example: 0
+                        createdAt:
+                          type: string
+                          format: date-time
+                          example: '2024-03-17 00:11:23'
+                        updatedAt:
+                          type: string
+                          format: date-time
+                          example: '2024-03-17 00:11:23'
+                        sensorId:
+                          type: string
+                          example: 'S1'
+                  meta:
+                    type: object
+                    properties:
+                      pagination:
+                        type: object
+                        properties:
+                          count:
+                            type: integer
+                            description: Quantity of records on current page.
+                            example: 1
+                          total:
+                            type: integer
+                            description: Quantity of all records.
+                            example: 8
+                          pageSize:
+                            type: integer
+                            description: Quantity of records in request.
+                            example: 1
+                          currentPage:
+                            type: integer
+                            description: The number of current page.
+                            example: 1
+                          totalPage:
+                            type: integer
+                            description: Total number of pages.
+                            example: 8
+                          hasNext:
+                            type: boolean
+                            description: Whether it is possible to forward pages or not.
+                            example: true
+                          hasPrevious:
+                            type: boolean
+                            description: Whether it is possible to return to the previous page or not
+                            example: false
+  /sensor/data/delete:
+    delete:
+      tags:
+        - sensor
+      summary: Delete data sensor.
+      description: Fetch data sensor by multiple criteria.
+      parameters:
+        - name: dataId
+          in: query
+          required: true
+          description: The ID of the data sensor to delete. The `dataId` are <mark>separated by **commas**, written next to each other without spaces</mark>
+          schema:
+            type: string
+            example: '1,3,4,5'
+      responses:
+        '200':
+          description: Succeed to delete data sensor. The `response.data` will be the **number** of removed records from database.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Succeed to get data sensor
+                  data:
+                    type: integer
+                    example: 1
+
+  /device:
+    get:
+      tags:
+        - device
+      summary: Fetch all devices
+      responses:
+        '200':
+          description: Success to get all devices
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Success to get all devices
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Device'
+  /device/create:
+    post:
+      tags:
+        - device
+      summary: Create a new device
+      description: Create a new device
+      requestBody:
+        required: true
+        description: Set a new device
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceId:
+                  type: string
+                  example: 'D1'
+                name:
+                  type: string
+                  example: 'Fan'
+                description:
+                  type: string
+                  example: 'Quạt'
+      responses:
+        '201':
+          description: Succeed to add device
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: Succeed to add device
+                  data:
+                    $ref: '#/components/schemas/Device'
+        '400':
+          description: Add a device that already existed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Device already exists.
+  /device/{deviceId}:
+    get:
+      tags:
+        - device
+      summary: Fetch device by deviceId
+      parameters:
+        - in: path
+          name: deviceId
+          required: true
+          description: ID of the device to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success to get a device
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Succeed to get a device
+                  data:
+                    $ref: '#/components/schemas/Device'
+        '404':
+          description: Get a device that doesn't exist in database.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: No device found.
+  /device/update:
+    put:
+      tags:
+        - device
+      summary: Update an existing device
+      description: Update an existing device. If **_successfully_**, **the response.data will return the affected record.**
+      requestBody:
+        required: true
+        description: Update an existing device
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceId:
+                  type: string
+                  example: 'D1'
+                name:
+                  type: string
+                  example: 'Fan'
+                description:
+                  type: string
+                  example: 'Quạt'
+      responses:
+        '200':
+          description: Succeed to update sensor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Success to update sensor
+                  data:
+                    $ref: '#/components/schemas/Device'
+        '404':
+          description: Update a device that doesn't exist.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: No device found.
+  /device/update-status:
+    put:
+      tags:
+        - device
+      summary: Update a device status
+      description: Update the status of existing device. If **_successfully_**, **the response.data will return the affected record.**. The `_save` property will be a boolean value (**true, false**). If **true**, the status will be save to the database. See the responses below.
+      requestBody:
+        required: true
+        description: Update a device status
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceId:
+                  type: string
+                  example: 'D1'
+                action:
+                  type: string
+                  enum:
+                    - 'ON'
+                    - 'OFF'
+                _save:
+                  type: boolean
+                  enum:
+                    - true
+                    - false
+      responses:
+        '201':
+          description: Succeed to update device status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Success to update sensor
+                  data:
+                    $ref: '#/components/schemas/DataAction'
+        '200':
+          description: Succeed to update device status but NOT SAVE
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Succeed to update device status but NOT SAVE
+                  data:
+                    type: object
+                    example: {}
+        '404':
+          description: Update device status while the device does not exist.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: No device found.
+        '500':
+          description: Update device status while `_save = true` but **MQTT** is <mark>disconnected</mark>.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 500
+                  message:
+                    type: string
+                    example: You cannot save the data when MQTT is currently connected.
+  /device/action:
+    get:
+      tags:
+        - device
+      summary: Fetch data action.
+      description: Fetch data action by **multiple criteria**.
+      parameters:
+        - name: sensorId
+          in: query
+          required: false
+          description: The ID of the device to retrieve data for. If provided, the endpoint will return data for the device with this ID. If not provided, the endpoint will return data for all sensors.
+          schema:
+            type: string
+            example: 'D1'
+        - name: action
+          in: query
+          required: false
+          description: The action of the data action to retrieve.
+          schema:
+            type: string
+            enum:
+              - 'ON'
+              - 'OFF'
+        - name: startDate
+          in: query
+          required: false
+          description: The start date/time for the data range. If provided, the endpoint will return data recorded after this date/time.
+          schema:
+            type: string
+            format: date-time
+            example: '2024-03-16 00:00:00'
+        - name: endDate
+          in: query
+          required: false
+          description: The end date/time for the data range. If provided, the endpoint will return data recorded before this date/time.
+          schema:
+            type: string
+            format: date-time
+            example: '2024-03-17 00:00:00'
+        - name: orderBy
+          in: query
+          required: false
+          description: The field to sort the results by.
+          schema:
+            type: string
+            enum:
+              - createdAt
+        - name: direction
+          in: query
+          required: false
+          description: The direction of the sorting (ASC or DESC).
+          schema:
+            type: string
+            enum:
+              - ASC
+              - DESC
+        - name: page
+          in: query
+          required: false
+          description: The page number of the results.
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: pageSize
+          in: query
+          required: false
+          description: The number of results per page.
+          schema:
+            type: integer
+            minimum: 1
+            default: 10
+      responses:
+        '200':
+          description: Succeed to get data sensor. The response.data will be <mark>empty array</mark> if there isn't any records matching with all provided criteria.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Succeed to get data sensor
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DataAction'
+                  meta:
+                    type: object
+                    properties:
+                      pagination:
+                        type: object
+                        properties:
+                          count:
+                            type: integer
+                            description: Quantity of records on current page.
+                            example: 1
+                          total:
+                            type: integer
+                            description: Quantity of all records.
+                            example: 8
+                          pageSize:
+                            type: integer
+                            description: Quantity of records in request.
+                            example: 1
+                          currentPage:
+                            type: integer
+                            description: The number of current page.
+                            example: 1
+                          totalPage:
+                            type: integer
+                            description: Total number of pages.
+                            example: 8
+                          hasNext:
+                            type: boolean
+                            description: Whether it is possible to forward pages or not.
+                            example: true
+                          hasPrevious:
+                            type: boolean
+                            description: Whether it is possible to return to the previous page or not
+                            example: false
+  /device/action/delete:
+    delete:
+      tags:
+        - device
+      summary: Delete data action.
+      description: Delete data action..
+      parameters:
+        - name: dataId
+          in: query
+          required: true
+          description: The ID of the data to delete. The `dataId` are <mark>separated by **commas**, written next to each other without spaces</mark>
+          schema:
+            type: string
+            example: '1,3,4,5'
+      responses:
+        '200':
+          description: Succeed to delete data action. The `response.data` will be the **number** of removed records from database.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Succeed to get data sensor
+                  data:
+                    type: integer
+                    example: 1
+components:
+  schemas:
+    Sensor:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 'S1'
+        name:
+          type: string
+          example: 'Thanh-Sensor'
+        address:
+          type: string
+          example: 'localhost-THANH'
+        createdAt:
+          type: string
+          format: date-time
+          example: '2024-03-16 10:00:57'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2024-03-16 10:00:57'
+      xml:
+        name: sensor
+    Device:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 'D1'
+        name:
+          type: string
+          example: 'Fan'
+        description:
+          type: string
+          example: 'Quạt'
+        createdAt:
+          type: string
+          format: date-time
+          example: '2024-03-16 09:59:30'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2024-03-16 09:59:30'
+      xml:
+        name: device
+    DataSensor:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        temperature:
+          type: number
+          format: double
+          example: 25.22
+        humidity:
+          type: number
+          format: double
+          example: 80.30
+        brightness:
+          type: integer
+          example: 972
+        createdAt:
+          type: string
+          format: date-time
+          example: '2024-03-16 09:59:30'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2024-03-16 09:59:30'
+      xml:
+        name: dataSensor
+    DataAction:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        action:
+          type: string
+          description: Device action status
+          example: 'ON'
+          enum:
+            - 'ON'
+            - 'OFF'
+        createdAt:
+          type: string
+          format: date-time
+          example: '2024-03-16 09:59:30'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2024-03-16 09:59:30'
+        deviceId:
+          type: string
+          example: 'D1'
+      xml:
+        name: dataAction

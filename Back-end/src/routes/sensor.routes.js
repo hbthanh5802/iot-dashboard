@@ -10,6 +10,8 @@ router.delete('/data/delete', sensorController.deleteDataSensor);
 router.post('/create', sensorController.createNew);
 // GET a sensor info
 router.get('/:sensorId', sensorController.getSensor);
+// UPDATE a sensor info
+router.put('/update', sensorController.updateSensor);
 // Get all sensors
 router.get('/', sensorController.getAll);
 

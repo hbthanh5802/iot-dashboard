@@ -1,7 +1,7 @@
 const { mqttClient, publishMessage } = require('../utils/mqttClient');
 const SensorModel = require('../models/Sensor.model');
 const DataSensorModel = require('../models/DataSensor.model');
-const { Op } = require('sequelize');
+const { Op, where } = require('sequelize');
 const dateHelper = require('../utils/date.helper');
 const sensorServices = {};
 
@@ -9,7 +9,7 @@ sensorServices.createSensor = async (payload) => {
   const { name, address, sensorId } = payload;
   const response = {
     statusCode: 201,
-    message: 'Success to add device',
+    message: 'Succeed to add a sensor',
     data: {},
   };
   try {
@@ -20,7 +20,31 @@ sensorServices.createSensor = async (payload) => {
   } catch (error) {
     console.error('Error request:', error);
     response.statusCode = 500;
-    response.message = 'Failed to add device';
+    response.message = 'Failed to add a sensor';
+    throw error;
+  }
+  return response;
+};
+
+sensorServices.updateSensor = async (payload) => {
+  const { name, address, sensorId } = payload;
+  const response = {
+    statusCode: 200,
+    message: 'Succeed to update sensor',
+    data: {},
+  };
+  try {
+    const requirements = { name, address };
+    // UPDATE `iot_dashboard`.`sensors` SET `name` = 'Another-Sensors' WHERE (`id` = 'S2');
+    let sensor = await SensorModel.update(requirements, {
+      where: { id: sensorId },
+    });
+    sensor = await SensorModel.findByPk(sensorId);
+    response.data = sensor;
+  } catch (error) {
+    console.error('Error request:', error);
+    response.statusCode = 500;
+    response.message = 'Failed to update sensor';
     throw error;
   }
   return response;
@@ -29,7 +53,7 @@ sensorServices.createSensor = async (payload) => {
 sensorServices.fetchAll = async (payload) => {
   const response = {
     statusCode: 200,
-    message: 'Success to get a device',
+    message: 'Succeed to get all sensors',
     data: {},
   };
   try {
@@ -39,7 +63,7 @@ sensorServices.fetchAll = async (payload) => {
   } catch (error) {
     console.error('Error request:', error);
     response.statusCode = 500;
-    response.message = 'Failed to get a device';
+    response.message = 'Failed to get all sensors';
     throw error;
   }
   return response;
@@ -49,7 +73,7 @@ sensorServices.fetchSensor = async (payload) => {
   const { sensorId } = payload;
   const response = {
     statusCode: 200,
-    message: 'Success to get a sensor',
+    message: 'Succeed to get a sensor',
     data: {},
   };
   try {
@@ -70,7 +94,7 @@ sensorServices.saveSensorData = async (payload) => {
   const { sensorId, temperature, humidity, brightness } = payload;
   const response = {
     statusCode: 201,
-    message: 'Success to save data sensor',
+    message: 'Succeed to save data sensor',
     data: {},
   };
   try {
@@ -100,12 +124,13 @@ sensorServices.saveSensorData = async (payload) => {
 sensorServices.fetchSensorDataByCriteria = async (payload) => {
   const response = {
     statusCode: 200,
-    message: 'Success to get data sensor',
+    message: 'Succeed to get data sensor',
     data: {},
     meta: {},
   };
   try {
     const searchCriteria = payload;
+    console.log('searchCriteria', searchCriteria);
     if (
       !searchCriteria ||
       typeof searchCriteria !== 'object' ||
@@ -113,6 +138,7 @@ sensorServices.fetchSensorDataByCriteria = async (payload) => {
     ) {
       response.statusCode = 422; //  Unprocessable Entity
       response.message = 'Invalid search criteria.';
+      return response;
     } else {
       let condition = {};
       let whereCondition = {};
@@ -190,7 +216,7 @@ sensorServices.removeSensorData = async (payload) => {
   const { dataId } = payload;
   const response = {
     statusCode: 200,
-    message: 'Success to delete data sensor',
+    message: 'Succeed to delete data sensor',
     data: {},
   };
   try {
