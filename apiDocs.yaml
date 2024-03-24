@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: '1.0'
+  version: '1.0.0'
   title: Iot Dashboard - MUL14154
   description: |-
     This project is a backend application developed using `Node.js` and `Express.js`, providing features such as communication via `MQTT protocol` and `WebSocket` using **Socket.IO**. It enables real-time data transmission from hardware sensors (**temperature, humidity, and light sensors**) and control of system devices.
