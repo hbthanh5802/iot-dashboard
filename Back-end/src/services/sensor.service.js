@@ -171,6 +171,10 @@ sensorServices.fetchSensorDataByCriteria = async (payload) => {
           [Op.lte]: dateHelper.convertDateFormat(searchCriteria.endDate),
         };
       }
+      // SEARCH CONDITION
+      if (searchCriteria.searchField && searchCriteria.searchValue) {
+        whereCondition[searchCriteria.searchField] = searchCriteria.searchValue;
+      }
       // ORDER CONDITION
       if (searchCriteria.orderBy && searchCriteria.direction) {
         const direction = searchCriteria.direction.toString().toUpperCase();

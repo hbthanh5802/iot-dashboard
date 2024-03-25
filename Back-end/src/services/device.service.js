@@ -97,7 +97,7 @@ deviceServices.updateDevice = async (payload) => {
 deviceServices.updateDeviceStatus = async (payload) => {
   const { deviceId, action, _save } = payload;
   const response = {
-    statusCode: 201,
+    statusCode: 200,
     message: 'Succeed to update device status',
     data: {},
   };
@@ -192,6 +192,10 @@ deviceServices.fetchDataActionByCriteria = async (payload) => {
       condition.offset = (page - 1) * pageSize;
       // Query
       const dataAction = await DataActionModel.findAll(condition);
+      // const dataAction = await DataActionModel.findAll({
+      //   ...condition,
+      //   include: DeviceModel,
+      // });
 
       response.data = dataAction;
       response.meta.pagination = {

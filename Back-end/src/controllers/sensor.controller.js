@@ -1,14 +1,12 @@
 const sensorServices = require('../services/sensor.service');
 const { mqttClient, publishMessage } = require('../utils/mqttClient');
-const { useSocket } = require('../utils/socketClient.helper');
 const io = require('.././index');
-const { json } = require('body-parser');
 
 const sensorController = {};
 
 const saveSensorData = async (data) => {
   let response;
-  const { temperatureC, humidity, brightness, sensorId } = data;
+  let { temperatureC, humidity, brightness, sensorId } = data;
   try {
     if (!sensorId) sensorId = 'S1';
     const payload = {
@@ -100,8 +98,17 @@ sensorController.updateSensor = async (req, res, next) => {
 
 sensorController.getDataSensor = async (req, res, next) => {
   let response;
-  const { sensorId, startDate, endDate, orderBy, direction, page, pageSize } =
-    req.query;
+  const {
+    sensorId,
+    startDate,
+    endDate,
+    orderBy,
+    direction,
+    page,
+    pageSize,
+    searchField,
+    searchValue,
+  } = req.query;
   try {
     const payload = {
       sensorId,
@@ -111,6 +118,8 @@ sensorController.getDataSensor = async (req, res, next) => {
       direction,
       page: +page,
       pageSize: +pageSize,
+      searchField,
+      searchValue: +searchValue,
     };
     response = await sensorServices.fetchSensorDataByCriteria(payload);
     res.status(200).json(response);
@@ -169,21 +178,20 @@ mqttClient.on('message', function (topic, message) {
       saveSensorData(messageObj)
         .then((response) => {
           if (response.statusCode === 201) {
-            // _socket?.emit('sensorData', JSON.stringify(response?.data));
-            _socket?.emit(
-              'sensorData',
-              JSON.stringify({
-                temperature: (Math.random() * 100 + 1).toFixed(2),
-                humidity: (Math.random() * 100 + 1).toFixed(2),
-                brightness: (Math.random() * 1023 + 1).toFixed(2),
-                createdAt: new Date().toISOString(),
-              })
-            );
+            _socket?.emit('sensorData', JSON.stringify(response?.data));
+            // _socket?.emit(
+            //   'sensorData',
+            //   JSON.stringify({
+            //     temperature: (Math.random() * 100 + 1).toFixed(2),
+            //     humidity: (Math.random() * 100 + 1).toFixed(2),
+            //     brightness: (Math.random() * 1023 + 1).toFixed(2),
+            //     createdAt: new Date().toISOString(),
+            //   })
+            // );
           }
         })
-        .catch((error) => {})
-        .catch(() => {
-          canSend = false;
+        .catch((error) => {
+          console.log(error);
         });
     }
   }
