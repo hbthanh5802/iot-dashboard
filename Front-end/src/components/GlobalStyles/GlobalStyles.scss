@@ -152,3 +152,9 @@ img {
 button {
   cursor: pointer;
 }
+
+//  Global custom antd styles
+
+.ant-tag {
+  background-color: transparent !important;
+}

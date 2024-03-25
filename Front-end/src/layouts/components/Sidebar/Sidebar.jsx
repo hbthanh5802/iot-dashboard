@@ -36,7 +36,7 @@ function Sidebar() {
           setIsFanOn(mode);
         })
         .catch((error) => {
-          console.log('error', error);
+          console.log('Error', error.data);
           if (allowNotify) messageApi.error(`Failed to ${!mode ? 'TURN OFF' : 'TURN ON'} THE FAN`);
           setIsFanOn(!mode);
         });
@@ -60,7 +60,7 @@ function Sidebar() {
           setIsLightOn(mode);
         })
         .catch((error) => {
-          console.log('error', error);
+          console.log('Error', error.data);
           if (allowNotify) messageApi.error(`Failed to ${!mode ? 'TURN OFF' : 'TURN ON'} THE LIGHT`);
           setIsLightOn(!mode);
         });

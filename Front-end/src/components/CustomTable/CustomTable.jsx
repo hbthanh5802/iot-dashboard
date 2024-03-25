@@ -15,9 +15,9 @@ import {
   Button,
   message,
   DatePicker,
-  Divider,
   Tag,
   FloatButton,
+  InputNumber,
 } from 'antd';
 
 import * as time from '@/utils/time';
@@ -29,6 +29,9 @@ import { MdDeleteForever } from 'react-icons/md';
 import { LuRefreshCw } from 'react-icons/lu';
 import { FaArrowRight } from 'react-icons/fa6';
 import { RiToolsFill } from 'react-icons/ri';
+import { FaEquals } from 'react-icons/fa6';
+import { FaGreaterThanEqual } from 'react-icons/fa6';
+import { FaLessThanEqual } from 'react-icons/fa6';
 import moment from 'moment';
 
 import './CustomTable.scss';
@@ -79,6 +82,12 @@ const darkTheme = {
       colorText: 'var(--primary) !important',
     },
     Input: {
+      colorBgContainer: 'var(--gray)',
+      colorBorder: 'var(--gray-light)',
+      colorText: 'var(--gray-lightest)',
+      colorTextPlaceholder: 'var(--gray-light)',
+    },
+    InputNumber: {
       colorBgContainer: 'var(--gray)',
       colorBorder: 'var(--gray-light)',
       colorText: 'var(--gray-lightest)',
@@ -135,7 +144,11 @@ const directionOrderOption = [
 const actionFilterOption = [
   {
     value: 'ON',
-    label: <Tag color="green">ON</Tag>,
+    label: (
+      <Tag className="ctTable-tag" color="green">
+        ON
+      </Tag>
+    ),
   },
   {
     value: 'OFF',
@@ -143,10 +156,55 @@ const actionFilterOption = [
   },
 ];
 
-function CustomTable({ data, columns, title, paginationData, handlePageChange, loading, filterData, ...otherProps }) {
+const searchOperatorOptions = [
+  {
+    label: (
+      <>
+        <span style={{ paddingRight: 10 }}>Equal to</span>
+        <Tag color="green">{<FaEquals />}</Tag>
+      </>
+    ),
+    value: 'equal',
+  },
+  {
+    label: (
+      <>
+        <span style={{ paddingRight: 10 }}>Greater or equal</span>
+        <Tag color="green">{<FaGreaterThanEqual />}</Tag>
+      </>
+    ),
+    value: 'greater',
+  },
+  {
+    label: (
+      <>
+        <span style={{ paddingRight: 10 }}>Less or equal</span>
+        <Tag color="green">{<FaLessThanEqual />}</Tag>
+      </>
+    ),
+    value: 'less',
+  },
+  {
+    label: 'In range',
+    value: 'inRange',
+  },
+];
+
+function CustomTable({
+  data,
+  columns,
+  title,
+  paginationData,
+  handlePageChange,
+  loading,
+  filterData,
+  searchData,
+  handleSearchChange,
+  ...otherProps
+}) {
   const [messageApi, contextHolder] = message.useMessage();
   const { dark } = useContext(ThemeContext);
-  const [paginationPageSize, setPaginationPageSize] = useState(10);
+  // const [paginationPageSize, setPaginationPageSize] = useState(10);
   const [orderFilter, setOrderFilter] = useState({});
   const [dateFilter, setDateFilter] = useState({});
   const [selectedData, setSelectedData] = useState(data);
@@ -220,16 +278,20 @@ function CustomTable({ data, columns, title, paginationData, handlePageChange, l
     // }),
   };
 
-  const handleSearch = () => {
+  const handleSearchBtnClick = () => {
     let originalFilterData = { ...filterData };
     // Oder filter
     let orderCOndition = {};
-    if (!orderFilter.orderBy || !orderFilter.direction) {
-      messageApi.warning('Something went wrong with ORDER CONDITION!');
-      const { orderBy, direction, ...otherFilters } = originalFilterData;
-      originalFilterData = { ...otherFilters };
+    const { orderBy, direction } = orderFilter;
+    if (!orderBy && !direction) {
     } else {
-      orderCOndition = { ...originalFilterData, ...orderFilter };
+      if (!orderBy || !direction) {
+        messageApi.warning(`${!orderFilter.orderBy ? 'ORDER BY' : 'ORDER DIRECTION'} is invalid`);
+        const { orderBy, direction, ...otherFilters } = originalFilterData;
+        originalFilterData = { ...otherFilters };
+      } else {
+        orderCOndition = { ...originalFilterData, ...orderFilter };
+      }
     }
     // Date filter
     // console.log('dateFilter', dateFilter);
@@ -249,8 +311,34 @@ function CustomTable({ data, columns, title, paginationData, handlePageChange, l
       originalFilterData = { ...otherFilters };
     }
 
-    // console.log('finalFilterResult', finalFilterResult);
-    handlePageChange({ ...originalFilterData, ...orderCOndition, ...dateCondition });
+    // Search condition
+    let searchCondition = {};
+    const { searchField, searchOperator, searchValue } = searchData;
+    if (searchField && searchOperator && searchValue) {
+      const valueArray = searchData.searchValue?.split(',');
+      searchCondition = { searchField, searchOperator };
+      if (valueArray.length === 1) {
+        searchCondition.searchValue = valueArray[0];
+      } else if (valueArray[0] < valueArray[1]) {
+        searchCondition.searchValue = searchValue;
+      } else {
+        messageApi.warning('FROM VALUE cannot greater than TO VALUE.');
+      }
+    } else {
+      delete originalFilterData.searchOperator;
+      delete originalFilterData.searchValue;
+      delete originalFilterData.searchField;
+      messageApi.info('Searching VALUE is not applied.');
+    }
+
+    handlePageChange({
+      ...originalFilterData,
+      ...orderCOndition,
+      ...dateCondition,
+      ...searchCondition,
+      page: 1,
+      pageSize: 10,
+    });
   };
 
   function handleExportData({ key }) {
@@ -276,74 +364,148 @@ function CustomTable({ data, columns, title, paginationData, handlePageChange, l
       <Flex align="center" justify="space-between" className={'ctTable-header'}>
         <p className={'ctTable-header-title'}>{title}</p>
 
-        <Space>
-          {window.location.pathname === '/history/actions' && (
+        <Flex align="center" gap={20}>
+          <Flex vertical gap={10} align="flex-end">
             <Space>
-              <p className="csTable-filter-title">Action:</p>
-              <Tooltip title="Select and show results immediately">
-                <>
+              <Flex align="center" gap={10}>
+                <p className="csTable-filter-title">Date filter:</p>
+                <Space>
+                  <DatePicker
+                    showTime
+                    onChange={(date, dateString) => setDateFilter((prev) => ({ ...prev, startDate: dateString }))}
+                  />
+                  <p className="csTable-filter-title">
+                    <FaArrowRight style={{ display: 'flex' }} />
+                  </p>
+                  <DatePicker
+                    showTime
+                    onChange={(date, dateString) => setDateFilter((prev) => ({ ...prev, endDate: dateString }))}
+                  />
+                </Space>
+              </Flex>
+              <Space>
+                <p className="csTable-filter-title">Order:</p>
+                <Space.Compact>
                   <Select
                     allowClear
-                    placeholder="Select an action"
+                    placeholder="Select a field"
                     style={{
-                      width: 150,
+                      width: 160,
                     }}
-                    options={actionFilterOption}
-                    onChange={(value) => otherProps?.handleChangeActionFilter(value)}
+                    options={optionOrderBy}
+                    onChange={(value) => setOrderFilter((prev) => ({ ...prev, orderBy: value }))}
                   />
-                </>
-              </Tooltip>
+                  <Select
+                    allowClear
+                    placeholder="Direction"
+                    style={{
+                      width: 120,
+                    }}
+                    options={directionOrderOption}
+                    onChange={(value) => setOrderFilter((prev) => ({ ...prev, direction: value }))}
+                  />
+                </Space.Compact>
+              </Space>
             </Space>
-          )}
-          <Divider type="vertical" />
-
-          <Flex align="center" gap={10}>
-            <p className="csTable-filter-title">Date filter:</p>
+            {/* Search Space */}
             <Space>
-              <DatePicker
-                showTime
-                onChange={(date, dateString) => setDateFilter((prev) => ({ ...prev, startDate: dateString }))}
-              />
-              <p className="csTable-filter-title">
-                <FaArrowRight style={{ display: 'flex' }} />
-              </p>
-              <DatePicker
-                showTime
-                onChange={(date, dateString) => setDateFilter((prev) => ({ ...prev, endDate: dateString }))}
-              />
+              {window.location.pathname === '/history/sensors' && (
+                <Space>
+                  <p className="csTable-filter-title">Search with value:</p>
+                  <>
+                    <Space.Compact>
+                      <Tooltip title="Field to search" placement="bottomLeft">
+                        <>
+                          <Select
+                            allowClear
+                            placeholder="Select a field"
+                            style={{
+                              width: 160,
+                            }}
+                            options={optionOrderBy}
+                            onChange={(value) => handleSearchChange({ ...searchData, searchField: value })}
+                          />
+                        </>
+                      </Tooltip>
+                      <Tooltip title="Compare operator" placement="bottomLeft">
+                        <>
+                          <Select
+                            allowClear
+                            placeholder="Select a operator"
+                            style={{
+                              width: 200,
+                            }}
+                            options={searchOperatorOptions}
+                            onChange={(value) => handleSearchChange({ ...searchData, searchOperator: value })}
+                          />
+                        </>
+                      </Tooltip>
+                      <Tooltip
+                        title={searchData.searchOperator === 'inRange' ? 'From Value' : 'Value to search'}
+                        placement="bottomLeft"
+                      >
+                        <>
+                          <InputNumber
+                            style={{ width: 120 }}
+                            placeholder={searchData.searchOperator === 'inRange' ? 'From Value' : '00.00'}
+                            onChange={(value) => handleSearchChange({ ...searchData, searchValue: value?.toString() })}
+                            type="number"
+                          />
+                        </>
+                      </Tooltip>
+                      {searchData.searchOperator === 'inRange' && (
+                        <Tooltip
+                          title={searchData.searchOperator === 'inRange' ? 'To Value' : 'Value to search'}
+                          placement="bottomLeft"
+                        >
+                          <>
+                            <InputNumber
+                              disabled={!searchData.searchValue}
+                              style={{ width: 120 }}
+                              placeholder="To Value"
+                              onChange={(value) => {
+                                const searchValue = searchData.searchValue?.split(',')[0];
+                                handleSearchChange({
+                                  ...searchData,
+                                  searchValue: `${searchValue},${value ? value : ''}`,
+                                });
+                              }}
+                            />
+                          </>
+                        </Tooltip>
+                      )}
+                    </Space.Compact>
+                  </>
+                </Space>
+              )}
+              {window.location.pathname === '/history/actions' && (
+                <Space>
+                  <p className="csTable-filter-title">Action:</p>
+                  <Tooltip title="Select and show results immediately">
+                    <>
+                      <Select
+                        allowClear
+                        placeholder="Select an action"
+                        style={{
+                          width: 150,
+                        }}
+                        options={actionFilterOption}
+                        onChange={(value) => otherProps?.handleChangeActionFilter(value)}
+                      />
+                    </>
+                  </Tooltip>
+                </Space>
+              )}
             </Space>
           </Flex>
-          <Space>
-            <p className="csTable-filter-title">Order:</p>
-            <Space.Compact>
-              <Select
-                allowClear
-                placeholder="Select a field"
-                style={{
-                  width: 160,
-                }}
-                options={optionOrderBy}
-                onChange={(value) => setOrderFilter((prev) => ({ ...prev, orderBy: value }))}
-              />
-              <Select
-                allowClear
-                placeholder="Direction"
-                style={{
-                  width: 120,
-                }}
-                options={directionOrderOption}
-                onChange={(value) => setOrderFilter((prev) => ({ ...prev, direction: value }))}
-              />
-            </Space.Compact>
-            <Tooltip title="Apply and Search">
-              <Button
-                className="ctTable-search-btn"
-                onClick={handleSearch}
-                icon={<IoSearch className="ctTable-search-icon" />}
-              />
-            </Tooltip>
-          </Space>
-        </Space>
+          <Tooltip title="Apply and Search">
+            <Button
+              className="ctTable-search-btn"
+              onClick={handleSearchBtnClick}
+              icon={<IoSearch className="ctTable-search-icon" />}
+            />
+          </Tooltip>
+        </Flex>
       </Flex>
     );
   };
@@ -449,24 +611,22 @@ function CustomTable({ data, columns, title, paginationData, handlePageChange, l
             }}
             pagination={{
               position: ['bottomCenter'],
-              pageSize: paginationPageSize,
+              current: paginationData.currentPage ? paginationData.currentPage : 1,
+              pageSize: paginationData.pageSize,
               total: paginationData.total,
               showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
             }}
-            scroll={{ y: 500 }}
+            scroll={{ y: 480 }}
             onChange={(pagination, filters, sorter, extra) => {
-              console.group();
-              console.log('pagination', pagination);
-              console.groupEnd();
+              // console.group();
+              // console.log('pagination', pagination);
+              // console.groupEnd();
 
-              if (pagination) {
-                handlePageChange({
-                  ...filterData,
-                  page: pagination.current,
-                  pageSize: pagination.pageSize,
-                });
-                setPaginationPageSize(pagination.pageSize);
-              }
+              handlePageChange({
+                ...filterData,
+                page: pagination.current,
+                pageSize: pagination.pageSize,
+              });
             }}
           />
           <>
@@ -487,7 +647,9 @@ function CustomTable({ data, columns, title, paginationData, handlePageChange, l
               <FloatButton
                 icon={<LuRefreshCw />}
                 tooltip="Refresh"
-                onClick={() => handlePageChange({ ...filterData, refresh: Math.random() * 100 })}
+                onClick={() =>
+                  handlePageChange({ orderBy: 'createdAt', direction: 'DESC', refresh: Math.random() * 100 })
+                }
               />
             </FloatButton.Group>
           </>

@@ -54,6 +54,12 @@ function SensorsHistory() {
   });
   // Other filter
   const [deleteList, setDeleteList] = useState([]);
+  const [search, setSearch] = useState({
+    searchField: '',
+    searchValue: '',
+    searchOperator: '',
+  });
+
   const handleDeleteChange = useCallback((idList) => setDeleteList(idList), []);
   const handleDeleteDataSensor = useCallback(async () => {
     if (deleteList.length === 0) {
@@ -77,6 +83,11 @@ function SensorsHistory() {
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deleteList, messageApi]);
+
+  const handleSearchChange = useCallback((data) => {
+    const { searchField, searchValue, searchOperator } = data;
+    setSearch((prev) => ({ ...prev, searchField, searchValue, searchOperator }));
+  }, []);
 
   useEffect(() => {
     const fetchSensorData = async () => {
@@ -115,6 +126,8 @@ function SensorsHistory() {
           paginationData={pagination}
           handlePageChange={handlePageChange}
           filterData={filters}
+          searchData={search}
+          handleSearchChange={handleSearchChange}
           handleDeleteChange={handleDeleteChange}
           handleDeleteDataSensor={handleDeleteDataSensor}
         />
