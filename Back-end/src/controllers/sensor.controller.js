@@ -113,7 +113,6 @@ sensorController.getDataSensor = async (req, res, next) => {
   try {
     if (searchValue) {
       searchValue = searchValue?.split(',').map((value) => +value);
-      console.log('searchValue', searchValue);
     }
     const payload = {
       sensorId,

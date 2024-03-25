@@ -225,7 +225,7 @@ function CustomTable({
     });
     return resultOrderFiltered.map((item) => ({
       label: item?.dataIndex[0]?.toUpperCase() + item?.dataIndex?.slice(1),
-      value: item?.dataIndex?.toLowerCase(),
+      value: item?.dataIndex,
     }));
   }, [columns]);
 
@@ -422,7 +422,7 @@ function CustomTable({
                             style={{
                               width: 160,
                             }}
-                            options={optionOrderBy}
+                            options={optionOrderBy.filter((item) => item?.value !== 'createdAt')}
                             onChange={(value) => handleSearchChange({ ...searchData, searchField: value })}
                           />
                         </>
