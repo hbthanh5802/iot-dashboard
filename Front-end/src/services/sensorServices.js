@@ -7,7 +7,6 @@ sensorServices.getSensorData = async ({ method, token, data, params, path, allow
     response = await sendRequest({ method: 'GET', data, token, path: '/sensor/data', params, allowLog });
     return response;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -25,7 +24,6 @@ sensorServices.deleteSensorData = async ({ method, token, data, params, path, al
     });
     return response;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };

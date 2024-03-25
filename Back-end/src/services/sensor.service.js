@@ -172,8 +172,29 @@ sensorServices.fetchSensorDataByCriteria = async (payload) => {
         };
       }
       // SEARCH CONDITION
-      if (searchCriteria.searchField && searchCriteria.searchValue) {
-        whereCondition[searchCriteria.searchField] = searchCriteria.searchValue;
+      if (
+        searchCriteria.searchField &&
+        searchCriteria.searchValue &&
+        searchCriteria.searchOperator
+      ) {
+        const field = searchCriteria.searchField;
+        const operator = searchCriteria.searchOperator;
+        const value = searchCriteria.searchValue;
+        if (operator === 'equal') {
+          whereCondition[field] = value[0];
+        } else if (operator === 'greater') {
+          whereCondition[field] = {
+            [Op.gte]: value[0],
+          };
+        } else if (operator === 'less') {
+          whereCondition[field] = {
+            [Op.lte]: value[0],
+          };
+        } else if (operator === 'inRange') {
+          whereCondition[field] = {
+            [Op.between]: value,
+          };
+        }
       }
       // ORDER CONDITION
       if (searchCriteria.orderBy && searchCriteria.direction) {

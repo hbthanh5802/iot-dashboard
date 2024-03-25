@@ -31,7 +31,7 @@ deviceServices.getDevice = async ({ method, token, data, params, path, allowLog 
       allowLog,
     });
   } catch (error) {
-    console.log(error);
+    throw error;
   }
   return response;
 };
@@ -49,7 +49,7 @@ deviceServices.getAllDevices = async ({ method, token, data, params, path, allow
     });
     return response;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
@@ -59,7 +59,7 @@ deviceServices.getDataAction = async ({ method, token, data, params, path, allow
     response = await sendRequest({ method: 'GET', data, token, path: '/device/action', params, allowLog });
     return response;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
@@ -76,7 +76,7 @@ deviceServices.deleteActionData = async ({ method, token, data, params, path, al
     });
     return response;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 

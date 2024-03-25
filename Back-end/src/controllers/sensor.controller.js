@@ -98,7 +98,7 @@ sensorController.updateSensor = async (req, res, next) => {
 
 sensorController.getDataSensor = async (req, res, next) => {
   let response;
-  const {
+  let {
     sensorId,
     startDate,
     endDate,
@@ -108,8 +108,13 @@ sensorController.getDataSensor = async (req, res, next) => {
     pageSize,
     searchField,
     searchValue,
+    searchOperator, // equal, greater, less, inRange
   } = req.query;
   try {
+    if (searchValue) {
+      searchValue = searchValue?.split(',').map((value) => +value);
+      console.log('searchValue', searchValue);
+    }
     const payload = {
       sensorId,
       startDate,
@@ -119,7 +124,8 @@ sensorController.getDataSensor = async (req, res, next) => {
       page: +page,
       pageSize: +pageSize,
       searchField,
-      searchValue: +searchValue,
+      searchValue: searchValue,
+      searchOperator,
     };
     response = await sensorServices.fetchSensorDataByCriteria(payload);
     res.status(200).json(response);
@@ -154,7 +160,7 @@ io.on('connection', (socket) => {
   _socket = socket;
   // const sendMessage = setInterval(() => {
   //   io.emit(
-  //     'sensorData2',
+  //     'sensorData',
   //     JSON.stringify({
   //       temperature: (Math.random() * 100 + 1).toFixed(2),
   //       humidity: (Math.random() * 100 + 1).toFixed(2),
