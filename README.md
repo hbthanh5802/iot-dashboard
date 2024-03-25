@@ -38,7 +38,7 @@ IoT Dashboard is a web application that allows users to monitor and manage IoT d
 
 1. Navigate to the `Frontend` directory:
    ```bash
-   cd Frontend
+   cd Front-end
    ```
 2. Install dependencies using npm or yarn:
    ```bash
@@ -58,7 +58,7 @@ IoT Dashboard is a web application that allows users to monitor and manage IoT d
 
 1. Navigate to the `Backend` directory:
    ```bash
-   cd Backend
+   cd Back-end
    ```
 2. Install dependencies using npm or yarn:
    ```bash
