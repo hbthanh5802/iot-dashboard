@@ -43,7 +43,7 @@ deviceServices.getAllDevices = async ({ method, token, data, params, path, allow
       method: 'GET',
       data,
       token,
-      path: `/device${path ? '/' + path : ''}`,
+      path: `/device`,
       params,
       allowLog,
     });

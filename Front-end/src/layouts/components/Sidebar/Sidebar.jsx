@@ -111,7 +111,7 @@ function Sidebar() {
           handleLightClick({ mode: lightResponse.data[0].action === 'ON' ? true : false, _save: false });
         }
       })
-      .catch(([fanError, lightError]) => {
+      .catch((error) => {
         messageApi.error('Failed to get latest device status!');
         console.log('Error when getting latest device status');
       });

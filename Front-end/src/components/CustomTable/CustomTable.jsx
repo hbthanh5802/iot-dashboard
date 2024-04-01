@@ -314,21 +314,25 @@ function CustomTable({
     // Search condition
     let searchCondition = {};
     const { searchField, searchOperator, searchValue } = searchData;
-    if (searchField && searchOperator && searchValue) {
-      const valueArray = searchData.searchValue?.split(',');
+    const [fromValue, toValue] = searchData.searchValue?.split(',');
+    if (searchField && searchOperator && fromValue) {
       searchCondition = { searchField, searchOperator };
-      if (valueArray.length === 1) {
-        searchCondition.searchValue = valueArray[0];
-      } else if (valueArray[0] < valueArray[1]) {
-        searchCondition.searchValue = searchValue;
+      if (searchOperator === 'inRange' && toValue) {
+        if (+fromValue < +toValue) {
+          searchCondition.searchValue = searchValue;
+        } else {
+          messageApi.warning('FROM VALUE cannot greater than TO VALUE.');
+        }
+      } else if (searchOperator === 'inRange' && !toValue) {
+        searchCondition = {};
       } else {
-        messageApi.warning('FROM VALUE cannot greater than TO VALUE.');
+        searchCondition.searchValue = fromValue;
       }
     } else {
       delete originalFilterData.searchOperator;
       delete originalFilterData.searchValue;
       delete originalFilterData.searchField;
-      messageApi.info('Searching VALUE is not applied.');
+      messageApi.info('Searching condition is invalid.');
     }
 
     handlePageChange({
@@ -448,7 +452,15 @@ function CustomTable({
                           <InputNumber
                             style={{ width: 120 }}
                             placeholder={searchData.searchOperator === 'inRange' ? 'From Value' : '00.00'}
-                            onChange={(value) => handleSearchChange({ ...searchData, searchValue: value?.toString() })}
+                            onChange={(value) => {
+                              let searchValue = searchData.searchValue?.split(',');
+                              if (!value) {
+                                searchValue = [];
+                              } else {
+                                searchValue[0] = value;
+                              }
+                              handleSearchChange({ ...searchData, searchValue: searchValue.join(',') });
+                            }}
                             type="number"
                           />
                         </>
@@ -460,14 +472,14 @@ function CustomTable({
                         >
                           <>
                             <InputNumber
-                              disabled={!searchData.searchValue}
+                              disabled={!searchData.searchValue?.split(',')[0]?.trim()}
                               style={{ width: 120 }}
                               placeholder="To Value"
                               onChange={(value) => {
                                 const searchValue = searchData.searchValue?.split(',')[0];
                                 handleSearchChange({
                                   ...searchData,
-                                  searchValue: `${searchValue},${value ? value : ''}`,
+                                  searchValue: `${searchValue}${value ? ',' + value : ''}`,
                                 });
                               }}
                             />
@@ -510,6 +522,8 @@ function CustomTable({
     );
   };
 
+  // console.log('searchData', searchData);
+
   const renderTableFooter = () => {
     return (
       <div className={'ctTale-footer'}>
@@ -534,7 +548,7 @@ function CustomTable({
       </div>
     );
   };
-
+  // Prepare download data
   useEffect(() => {
     const header = ['STT'].concat(
       filteredColumns
