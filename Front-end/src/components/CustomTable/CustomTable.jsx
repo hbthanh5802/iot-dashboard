@@ -544,6 +544,7 @@ function CustomTable({
 
   useEffect(() => {
     handleSearchBtnClick();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(orderFilter)]);
 
   return (
