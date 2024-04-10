@@ -20,21 +20,25 @@ const columns = [
     key: 'temperature',
     title: 'Temperature (°C)',
     dataIndex: 'temperature',
+    sorter: true,
   },
   {
     key: 'humidity',
     title: 'Humidity (%)',
     dataIndex: 'humidity',
+    sorter: true,
   },
   {
     key: 'brightness',
     title: 'Brightness (Lux)',
     dataIndex: 'brightness',
+    sorter: true,
   },
   {
     key: 'createdAt',
     title: 'Created At',
     dataIndex: 'createdAt',
+    sorter: true,
   },
   {
     key: 'sensorId',

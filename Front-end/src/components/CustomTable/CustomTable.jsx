@@ -130,17 +130,6 @@ const darkTheme = {
   },
 };
 
-const directionOrderOption = [
-  {
-    value: 'DESC',
-    label: 'Descend',
-  },
-  {
-    value: 'ASC',
-    label: 'Ascend',
-  },
-];
-
 const actionFilterOption = [
   {
     value: 'ON',
@@ -217,13 +206,13 @@ function CustomTable({
     body: data,
   });
   // Setup orderField options
-  const optionOrderBy = useMemo(() => {
-    const resultOrderFiltered = columns.filter(({ dataIndex }) => {
+  const optionSearch = useMemo(() => {
+    const resultSearchFiltered = columns.filter(({ dataIndex }) => {
       const field = dataIndex.toLowerCase();
       if (!field.startsWith('id') && !field.endsWith('id') && field !== 'updatedat' && field !== 'action') return true;
       return false;
     });
-    return resultOrderFiltered.map((item) => ({
+    return resultSearchFiltered.map((item) => ({
       label: item?.dataIndex[0]?.toUpperCase() + item?.dataIndex?.slice(1),
       value: item?.dataIndex,
     }));
@@ -281,16 +270,17 @@ function CustomTable({
   const handleSearchBtnClick = () => {
     let originalFilterData = { ...filterData };
     // Oder filter
-    let orderCOndition = {};
+    let orderCondition = {};
     const { orderBy, direction } = orderFilter;
     if (!orderBy && !direction) {
+      orderCondition = { orderBy: 'createdAt', direction: 'DESC' };
     } else {
       if (!orderBy || !direction) {
         messageApi.warning(`${!orderFilter.orderBy ? 'ORDER BY' : 'ORDER DIRECTION'} is invalid`);
         const { orderBy, direction, ...otherFilters } = originalFilterData;
         originalFilterData = { ...otherFilters };
       } else {
-        orderCOndition = { ...originalFilterData, ...orderFilter };
+        orderCondition = { ...originalFilterData, ...orderFilter };
       }
     }
     // Date filter
@@ -313,31 +303,32 @@ function CustomTable({
 
     // Search condition
     let searchCondition = {};
-    const { searchField, searchOperator, searchValue } = searchData;
-    const [fromValue, toValue] = searchData.searchValue?.split(',');
-    if (searchField && searchOperator && fromValue) {
-      searchCondition = { searchField, searchOperator };
-      if (searchOperator === 'inRange' && toValue) {
-        if (+fromValue < +toValue) {
-          searchCondition.searchValue = searchValue;
+    if (searchData) {
+      const { searchField, searchOperator, searchValue } = searchData;
+      const [fromValue, toValue] = searchData.searchValue?.split(',');
+      if (searchField && searchOperator && fromValue) {
+        searchCondition = { searchField, searchOperator };
+        if (searchOperator === 'inRange' && toValue) {
+          if (+fromValue < +toValue) {
+            searchCondition.searchValue = searchValue;
+          } else {
+            messageApi.warning('FROM VALUE cannot greater than TO VALUE.');
+          }
+        } else if (searchOperator === 'inRange' && !toValue) {
+          searchCondition = {};
         } else {
-          messageApi.warning('FROM VALUE cannot greater than TO VALUE.');
+          searchCondition.searchValue = fromValue;
         }
-      } else if (searchOperator === 'inRange' && !toValue) {
-        searchCondition = {};
       } else {
-        searchCondition.searchValue = fromValue;
+        delete originalFilterData.searchOperator;
+        delete originalFilterData.searchValue;
+        delete originalFilterData.searchField;
       }
-    } else {
-      delete originalFilterData.searchOperator;
-      delete originalFilterData.searchValue;
-      delete originalFilterData.searchField;
-      messageApi.info('Searching condition is invalid.');
     }
 
     handlePageChange({
       ...originalFilterData,
-      ...orderCOndition,
+      ...orderCondition,
       ...dateCondition,
       ...searchCondition,
       page: 1,
@@ -369,7 +360,7 @@ function CustomTable({
         <p className={'ctTable-header-title'}>{title}</p>
 
         <Flex align="center" gap={20}>
-          <Flex vertical gap={10} align="flex-end">
+          <Flex gap={30} align="flex-end">
             <Space>
               <Flex align="center" gap={10}>
                 <p className="csTable-filter-title">Date filter:</p>
@@ -387,29 +378,6 @@ function CustomTable({
                   />
                 </Space>
               </Flex>
-              <Space>
-                <p className="csTable-filter-title">Order:</p>
-                <Space.Compact>
-                  <Select
-                    allowClear
-                    placeholder="Select a field"
-                    style={{
-                      width: 160,
-                    }}
-                    options={optionOrderBy}
-                    onChange={(value) => setOrderFilter((prev) => ({ ...prev, orderBy: value }))}
-                  />
-                  <Select
-                    allowClear
-                    placeholder="Direction"
-                    style={{
-                      width: 120,
-                    }}
-                    options={directionOrderOption}
-                    onChange={(value) => setOrderFilter((prev) => ({ ...prev, direction: value }))}
-                  />
-                </Space.Compact>
-              </Space>
             </Space>
             {/* Search Space */}
             <Space>
@@ -426,7 +394,7 @@ function CustomTable({
                             style={{
                               width: 160,
                             }}
-                            options={optionOrderBy.filter((item) => item?.value !== 'createdAt')}
+                            options={optionSearch.filter((item) => item?.value !== 'createdAt')}
                             onChange={(value) => handleSearchChange({ ...searchData, searchField: value })}
                           />
                         </>
@@ -434,7 +402,8 @@ function CustomTable({
                       <Tooltip title="Compare operator" placement="bottomLeft">
                         <>
                           <Select
-                            allowClear
+                            defaultValue={'equal'}
+                            // allowClear
                             placeholder="Select a operator"
                             style={{
                               width: 200,
@@ -492,7 +461,7 @@ function CustomTable({
               )}
               {window.location.pathname === '/history/actions' && (
                 <Space>
-                  <p className="csTable-filter-title">Action:</p>
+                  <p className="csTable-filter-title">Filter action:</p>
                   <Tooltip title="Select and show results immediately">
                     <>
                       <Select
@@ -573,6 +542,10 @@ function CustomTable({
     setTableData({ header, body });
   }, [filteredColumns, selectedData, checkedColumnList]);
 
+  useEffect(() => {
+    handleSearchBtnClick();
+  }, [JSON.stringify(orderFilter)]);
+
   return (
     <>
       {contextHolder}
@@ -632,15 +605,27 @@ function CustomTable({
             }}
             scroll={{ y: 480 }}
             onChange={(pagination, filters, sorter, extra) => {
-              // console.group();
+              // console.group('Table Changed');
               // console.log('pagination', pagination);
-              // console.groupEnd();
+              // console.log('sorter', sorter);
+              // console.groupEnd('Table Changed');
+
+              if (sorter.order && sorter.column) {
+                setOrderFilter({
+                  orderBy: sorter.columnKey,
+                  direction: sorter.order === 'ascend' ? 'ASC' : 'DESC',
+                });
+              } else {
+                setOrderFilter({});
+              }
 
               handlePageChange({
                 ...filterData,
                 page: pagination.current,
                 pageSize: pagination.pageSize,
               });
+
+              handleSearchBtnClick();
             }}
           />
           <>

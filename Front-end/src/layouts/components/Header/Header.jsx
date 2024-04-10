@@ -13,6 +13,7 @@ import { TbPhotoSensor3 } from 'react-icons/tb';
 import { GrAction } from 'react-icons/gr';
 import { FaRegCircleCheck } from 'react-icons/fa6';
 import { MdOutlineCancel } from 'react-icons/md';
+import { FaRegUser } from 'react-icons/fa';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import NavItem from './NavItem';
 
@@ -22,24 +23,8 @@ import mqttServices from '@/services/mqttServices';
 
 const cx = classNames.bind(styles);
 
-const historyItems = [
-  {
-    key: 'Sensors History',
-    label: <NavItem className={cx('nav-link')} title={'Sensors'} to={'/history/sensors'} />,
-    size: 'large',
-    icon: <TbPhotoSensor3 />,
-  },
-  {
-    key: 'Actions History',
-    label: <NavItem className={cx('nav-link')} title={'Actions'} to={'/history/actions'} />,
-    size: 'large',
-    icon: <GrAction />,
-  },
-];
-
 function Header() {
   const themeId = useId();
-  const location = useLocation();
   const { dark, handleToggleDark } = useContext(ThemeContext);
   const [isMQTTConnected, setIsMQTTConnected] = useState(false);
 
@@ -88,26 +73,19 @@ function Header() {
 
       <nav className={cx('nav')}>
         <Space size={'small'}>
-          <Dropdown
-            menu={{
-              items: historyItems,
-              selectable: true,
-            }}
-            placement="topRight"
-            autoAdjustOverflow={true}
-            overlayClassName={`dropdown-menu ${dark && 'dark'}`}
-          >
-            <div>
-              <NavItem
-                isActive={location.pathname.startsWith('/history')}
-                handleClick={(e) => e.preventDefault()}
-                className={cx('nav-link')}
-                title={'History'}
-                to={'/history'}
-              />
-            </div>
-          </Dropdown>
-          <NavItem className={cx('nav-link')} title={'Profile'} to={'/profile'} />
+          <NavItem
+            leftIcon={<TbPhotoSensor3 />}
+            className={cx('nav-link')}
+            title={'Sensor Data'}
+            to={'/history/sensors'}
+          />
+          <NavItem
+            leftIcon={<GrAction />}
+            className={cx('nav-link')}
+            title={'Action History'}
+            to={'/history/actions'}
+          />
+          <NavItem leftIcon={<FaRegUser />} className={cx('nav-link')} title={'Profile'} to={'/profile'} />
         </Space>
       </nav>
 

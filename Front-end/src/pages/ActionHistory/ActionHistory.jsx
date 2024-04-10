@@ -28,6 +28,7 @@ const columns = [
     key: 'createdAt',
     title: 'Created At',
     dataIndex: 'createdAt',
+    sorter: true,
   },
   {
     key: 'deviceId',
