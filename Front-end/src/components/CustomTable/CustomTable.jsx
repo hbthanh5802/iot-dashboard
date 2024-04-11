@@ -305,7 +305,6 @@ function CustomTable({
     let searchCondition = {};
     if (searchData) {
       const { searchField, searchOperator, searchValue } = searchData;
-      console.log('searchData', searchData);
       const [fromValue, toValue] = searchValue?.split(',');
       if (searchField && searchOperator && fromValue) {
         searchCondition = { searchField, searchOperator };
@@ -617,6 +616,7 @@ function CustomTable({
                   orderBy: sorter.columnKey,
                   direction: sorter.order === 'ascend' ? 'ASC' : 'DESC',
                 });
+                // handleSearchBtnClick();
               } else {
                 setOrderFilter({});
               }
@@ -626,8 +626,6 @@ function CustomTable({
                 page: pagination.current,
                 pageSize: pagination.pageSize,
               });
-
-              handleSearchBtnClick();
             }}
           />
           <>
