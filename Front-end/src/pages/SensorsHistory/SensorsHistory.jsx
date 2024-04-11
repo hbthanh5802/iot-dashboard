@@ -61,7 +61,7 @@ function SensorsHistory() {
   const [search, setSearch] = useState({
     searchField: '',
     searchValue: '',
-    searchOperator: '',
+    searchOperator: 'equal',
   });
 
   const handleDeleteChange = useCallback((idList) => setDeleteList(idList), []);

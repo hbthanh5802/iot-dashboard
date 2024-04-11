@@ -1,8 +1,8 @@
 import { useContext, useEffect, useId, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import classNames from 'classnames/bind';
 
-import { Dropdown, Space, Tag, Tooltip } from 'antd';
+import { Space, Tag, Tooltip } from 'antd';
 
 import styles from './Header.module.scss';
 import './DropdownMenu.scss';

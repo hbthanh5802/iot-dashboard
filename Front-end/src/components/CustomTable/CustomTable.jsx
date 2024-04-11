@@ -305,7 +305,8 @@ function CustomTable({
     let searchCondition = {};
     if (searchData) {
       const { searchField, searchOperator, searchValue } = searchData;
-      const [fromValue, toValue] = searchData.searchValue?.split(',');
+      console.log('searchData', searchData);
+      const [fromValue, toValue] = searchValue?.split(',');
       if (searchField && searchOperator && fromValue) {
         searchCondition = { searchField, searchOperator };
         if (searchOperator === 'inRange' && toValue) {
@@ -383,7 +384,7 @@ function CustomTable({
             <Space>
               {window.location.pathname === '/history/sensors' && (
                 <Space>
-                  <p className="csTable-filter-title">Search with value:</p>
+                  <p className="csTable-filter-title">Search value:</p>
                   <>
                     <Space.Compact>
                       <Tooltip title="Field to search" placement="bottomLeft">
