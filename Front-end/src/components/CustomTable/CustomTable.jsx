@@ -207,15 +207,31 @@ function CustomTable({
   });
   // Setup orderField options
   const optionSearch = useMemo(() => {
-    const resultSearchFiltered = columns.filter(({ dataIndex }) => {
+    let resultSearchFiltered = columns.filter(({ dataIndex }) => {
       const field = dataIndex.toLowerCase();
-      if (!field.startsWith('id') && !field.endsWith('id') && field !== 'updatedat' && field !== 'action') return true;
+      if (
+        !field.startsWith('id') &&
+        !field.endsWith('id') &&
+        !field.endsWith('name') &&
+        field !== 'updatedat' &&
+        field !== 'createdat' &&
+        field !== 'action'
+      )
+        return true;
       return false;
     });
-    return resultSearchFiltered.map((item) => ({
+
+    resultSearchFiltered = resultSearchFiltered.map((item) => ({
       label: item?.dataIndex[0]?.toUpperCase() + item?.dataIndex?.slice(1),
       value: item?.dataIndex,
     }));
+
+    resultSearchFiltered.push({
+      label: 'All',
+      value: 'all',
+    });
+
+    return resultSearchFiltered;
   }, [columns]);
 
   const checkColumnOptions = useMemo(() => {
@@ -368,6 +384,7 @@ function CustomTable({
                   <DatePicker
                     showTime
                     onChange={(date, dateString) => setDateFilter((prev) => ({ ...prev, startDate: dateString }))}
+                    placeholder="Start Date"
                   />
                   <p className="csTable-filter-title">
                     <FaArrowRight style={{ display: 'flex' }} />
@@ -375,6 +392,7 @@ function CustomTable({
                   <DatePicker
                     showTime
                     onChange={(date, dateString) => setDateFilter((prev) => ({ ...prev, endDate: dateString }))}
+                    placeholder="End Date"
                   />
                 </Space>
               </Flex>
@@ -394,7 +412,7 @@ function CustomTable({
                             style={{
                               width: 160,
                             }}
-                            options={optionSearch.filter((item) => item?.value !== 'createdAt')}
+                            options={optionSearch}
                             onChange={(value) => handleSearchChange({ ...searchData, searchField: value })}
                           />
                         </>
@@ -636,6 +654,7 @@ function CustomTable({
                 right: 24,
               }}
               icon={<RiToolsFill />}
+              tooltip="Tools"
             >
               <FloatButton
                 className="test"
