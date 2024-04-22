@@ -204,10 +204,10 @@ sensorServices.fetchSensorDataByCriteria = async (payload) => {
       if (Object.keys(whereCondition).length !== 0)
         condition.where = whereCondition;
       if (orderCondition.length !== 0) condition.order = orderCondition;
+
       // Query
-      // console.log('conditionA', condition);
       const totalData = await DataSensorModel.count(condition);
-      // console.log('totalData', totalData);
+
       // Pagination
       let { page, pageSize } = searchCriteria;
       if (!page) page = 1;
@@ -216,7 +216,15 @@ sensorServices.fetchSensorDataByCriteria = async (payload) => {
       condition.offset = (page - 1) * pageSize;
       // Query
       // console.log('conditionB', condition);
-      const dataSensor = await DataSensorModel.findAll(condition);
+      let dataSensor = null;
+      if (!searchCriteria.withSensorRef) {
+        dataSensor = await DataSensorModel.findAll(condition);
+      } else {
+        dataSensor = await DataSensorModel.findAll({
+          ...condition,
+          include: SensorModel,
+        });
+      }
 
       response.data = dataSensor;
       response.meta.pagination = {

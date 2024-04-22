@@ -41,9 +41,9 @@ const columns = [
     sorter: true,
   },
   {
-    key: 'sensorId',
-    title: 'SensorID',
-    dataIndex: 'sensorId',
+    key: 'sensorName',
+    title: 'Sensor Name',
+    dataIndex: 'sensorName',
   },
 ];
 
@@ -98,8 +98,12 @@ function SensorsHistory() {
       let response;
       try {
         setLoading(true);
-        response = await sensorServices.getSensorData({ params: filters, allowLog: true });
-        const dataSensor = response.data.map((dataItem, index) => ({ ...dataItem, key: index }));
+        response = await sensorServices.getSensorData({ params: { ...filters, withSensorRef: true }, allowLog: true });
+        const dataSensor = response.data.map((dataItem, index) => ({
+          ...dataItem,
+          key: index,
+          sensorName: dataItem?.sensor.name,
+        }));
         setSensorData(dataSensor);
         setPagination(response?.meta?.pagination);
       } catch (error) {

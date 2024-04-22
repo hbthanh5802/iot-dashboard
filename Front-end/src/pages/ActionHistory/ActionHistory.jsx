@@ -7,7 +7,7 @@ import styles from './ActionHistory.module.scss';
 import CustomTable from '@/components/CustomTable';
 import deviceServices from '@/services/deviceServices';
 
-import { Tag, Tooltip } from 'antd';
+import { Tag } from 'antd';
 
 const cx = classNames.bind(styles);
 
@@ -31,29 +31,21 @@ const columns = [
     sorter: true,
   },
   {
-    key: 'deviceId',
-    title: 'DeviceID',
-    dataIndex: 'deviceId',
+    key: 'deviceName',
+    title: 'Device Name',
+    dataIndex: 'deviceName',
   },
+  // {
+  //   key: 'deviceId',
+  //   title: 'DeviceID',
+  //   dataIndex: 'deviceId',
+  // },
 ];
-
-const getDeviceInfo = (deviceId, deviceList) => {
-  let infoText = 'Unknown';
-  deviceList.forEach((deviceItem) => {
-    const { id, name, description } = deviceItem;
-    if (id === deviceId) {
-      infoText = `Name: ${name} | ${description}`;
-      return;
-    }
-  });
-  return infoText;
-};
 
 function SensorsHistory() {
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState(false);
   const [actionData, setActionData] = useState([]);
-  const [deviceList, setDeviceList] = useState([]);
   const [pagination, setPagination] = useState({});
   const [filters, setFilters] = useState({
     orderBy: 'createdAt',
@@ -98,30 +90,15 @@ function SensorsHistory() {
   }, [deleteList, messageApi]);
 
   useEffect(() => {
-    deviceServices
-      .getAllDevices({ allowLog: true })
-      .then((response) => {
-        setDeviceList(response?.data);
-      })
-      .catch((error) => {
-        console.log('Error when get All devices', error.data);
-      });
-  }, []);
-
-  useEffect(() => {
     const fetchSensorData = async () => {
       let response;
       try {
         setLoading(true);
-        response = await deviceServices.getDataAction({ params: filters, allowLog: true });
+        response = await deviceServices.getDataAction({ params: { ...filters, withDeviceRef: true }, allowLog: true });
         const dataAction = response.data.map((dataItem, index) => ({
           ...dataItem,
           key: dataItem.id,
-          deviceId: (
-            <Tooltip title={getDeviceInfo(dataItem.deviceId, deviceList)} placement="rightTop">
-              <>{dataItem.deviceId}</>
-            </Tooltip>
-          ),
+          deviceName: dataItem?.device?.name,
         }));
         setActionData(dataAction);
         setPagination(response?.meta?.pagination);

@@ -4,9 +4,9 @@ const { DB_NAME, DB_USERNAME, DB_PASSWORD } = process.env;
 const sequelize = new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
   host: 'localhost',
   dialect: 'mysql',
+  // logging: false,
+  logging: (msg) => console.log('====>', msg),
   timezone: '+07:00',
-  // logging: (msg) => console.log('====>', msg),
-  logging: false,
   dialectOptions: {
     dateStrings: true,
     typeCast: true,
@@ -24,3 +24,6 @@ sequelize
   });
 
 module.exports = sequelize;
+
+// logging: (msg) => console.log('====>', msg),
+// logging: false,

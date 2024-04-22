@@ -109,6 +109,7 @@ sensorController.getDataSensor = async (req, res, next) => {
     searchField,
     searchValue,
     searchOperator, // equal, greater, less, inRange
+    withSensorRef, // true, false
   } = req.query;
   try {
     if (searchValue) {
@@ -125,6 +126,7 @@ sensorController.getDataSensor = async (req, res, next) => {
       searchField,
       searchValue: searchValue,
       searchOperator,
+      withSensorRef,
     };
     response = await sensorServices.fetchSensorDataByCriteria(payload);
     res.status(200).json(response);

@@ -121,6 +121,7 @@ deviceController.getDataAction = async (req, res, next) => {
     page,
     pageSize,
     action,
+    withDeviceRef,
   } = req.query;
   try {
     const payload = {
@@ -132,6 +133,7 @@ deviceController.getDataAction = async (req, res, next) => {
       action,
       page: +page,
       pageSize: +pageSize,
+      withDeviceRef,
     };
     response = await deviceServices.fetchDataActionByCriteria(payload);
     res.status(200).json(response);

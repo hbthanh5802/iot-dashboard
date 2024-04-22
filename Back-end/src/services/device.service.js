@@ -191,11 +191,15 @@ deviceServices.fetchDataActionByCriteria = async (payload) => {
       condition.limit = pageSize;
       condition.offset = (page - 1) * pageSize;
       // Query
-      const dataAction = await DataActionModel.findAll(condition);
-      // const dataAction = await DataActionModel.findAll({
-      //   ...condition,
-      //   include: DeviceModel,
-      // });
+      let dataAction = null;
+      if (!searchCriteria.withDeviceRef) {
+        dataAction = await DataActionModel.findAll(condition);
+      } else {
+        dataAction = await DataActionModel.findAll({
+          ...condition,
+          include: DeviceModel,
+        });
+      }
 
       response.data = dataAction;
       response.meta.pagination = {
@@ -208,6 +212,7 @@ deviceServices.fetchDataActionByCriteria = async (payload) => {
         hasPrevious: page > 1,
       };
     }
+    return response;
   } catch (error) {
     response.statusCode = 500;
     response.message = 'Failed to get data device';
