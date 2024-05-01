@@ -1,7 +1,7 @@
 const { mqttClient, publishMessage } = require('../utils/mqttClient');
 const SensorModel = require('../models/Sensor.model');
 const DataSensorModel = require('../models/DataSensor.model');
-const { Op, where } = require('sequelize');
+const { Op } = require('sequelize');
 const dateHelper = require('../utils/date.helper');
 const sensorServices = {};
 
@@ -227,7 +227,7 @@ sensorServices.fetchSensorDataByCriteria = async (payload) => {
       condition.limit = pageSize;
       condition.offset = (page - 1) * pageSize;
       // Query
-      console.log('conditionB', condition);
+      // console.log('conditionB', condition);
       let dataSensor = null;
       if (!searchCriteria.withSensorRef) {
         dataSensor = await DataSensorModel.findAll(condition);
