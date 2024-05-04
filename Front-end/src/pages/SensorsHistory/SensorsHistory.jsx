@@ -135,6 +135,7 @@ function SensorsHistory() {
           handlePageChange={handlePageChange}
           filterData={filters}
           searchData={search}
+          deleteList={deleteList}
           handleSearchChange={handleSearchChange}
           handleDeleteChange={handleDeleteChange}
           handleDeleteDataSensor={handleDeleteDataSensor}

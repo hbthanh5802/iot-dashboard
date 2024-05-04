@@ -188,6 +188,7 @@ function CustomTable({
   loading,
   filterData,
   searchData,
+  deleteList,
   handleSearchChange,
   ...otherProps
 }) {
@@ -407,6 +408,7 @@ function CustomTable({
                       <Tooltip title="Field to search" placement="bottomLeft">
                         <>
                           <Select
+                            defaultValue={'all'}
                             allowClear
                             placeholder="Select a field"
                             style={{
@@ -565,39 +567,26 @@ function CustomTable({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(orderFilter)]);
 
+  useEffect(() => {
+    const autoRefreshTimer = setInterval(() => {
+      handlePageChange({
+        ...filterData,
+        refresh: Math.random() * 100,
+      });
+    }, 5000);
+
+    return () => {
+      clearInterval(autoRefreshTimer);
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(filterData)]);
+
   return (
     <>
       {contextHolder}
       <div className={classNames('ctTable-wrapper', { dark })}>
-        <ConfigProvider
-          // theme={{
-          //   token: {
-          //     colorPrimary: '#9254de',
-          //   },
-          //   components: {
-          //     Table: {
-          //       rowHoverBg: 'rgba(110, 17, 217, 0.1)',
-          //       rowSelectedBg: 'rgba(110, 17, 217, 0.2)',
-          //       rowSelectedHoverBg: 'rgba(110, 17, 217, 0.3)',
-          //       headerBg: '#232227',
-          //       bodySortBg: 'rgba(110, 17, 217, 0.1)',
-          //       headerSortHoverBg: 'rgba(110, 17, 217, 0.1)',
-          //       headerSortActiveBg: 'rgba(110, 17, 217, 0.2)',
-          //       colorBgContainer: '#232227',
-          //       borderColor: 'rgba(var(--secondary-rgb), 0.6)',
-          //       colorText: 'var(--gray-400)',
-          //       colorTextHeading: 'var(--gray-300)',
-          //       headerFilterHoverBg: 'var(--gray)',
-          //       headerSplitColor: 'var(--gray)',
-          //       colorIcon: '#adb5bd',
-          //       filterDropdownBg: 'var(--gray)',
-          //       filterDropdownMenuBg: 'var(--gray)',
-          //       footerBg: 'var(--bg-box-dark)',
-          //     },
-          //   },
-          // }}
-          theme={dark ? darkTheme : lightTheme}
-        >
+        <ConfigProvider theme={dark ? darkTheme : lightTheme}>
           <Table
             loading={loading}
             style={{
@@ -649,6 +638,7 @@ function CustomTable({
           <>
             <FloatButton.Group
               trigger="hover"
+              open={!!deleteList?.length}
               type="primary"
               style={{
                 right: 24,

@@ -23,7 +23,7 @@ function Sidebar() {
   const handleFanClick = useCallback(
     ({ mode, _save, allowNotify }) => {
       const data = {
-        deviceId: 'D1',
+        deviceId: 'D2',
         action: mode,
         _save,
       };
@@ -48,7 +48,7 @@ function Sidebar() {
     ({ mode, _save, allowNotify }) => {
       // console.log('Save', _save);
       const data = {
-        deviceId: 'D2',
+        deviceId: 'D3',
         action: mode,
         _save,
       };
@@ -85,15 +85,15 @@ function Sidebar() {
   }, [isFanOn]);
 
   useEffect(() => {
-    const lightParams = {
+    const fanParams = {
       deviceId: 'D2',
       orderBy: 'createdAt',
       direction: 'DESC',
       page: 1,
       pageSize: 1,
     };
-    const fanParams = {
-      deviceId: 'D1',
+    const lightParams = {
+      deviceId: 'D3',
       orderBy: 'createdAt',
       direction: 'DESC',
       page: 1,

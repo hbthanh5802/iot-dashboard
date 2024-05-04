@@ -65,7 +65,9 @@ function SensorsHistory() {
     [JSON.stringify(filters)],
   );
   const [deleteList, setDeleteList] = useState([]);
-  const handleDeleteChange = useCallback((idList) => setDeleteList(idList), []);
+  const handleDeleteChange = useCallback((idList) => {
+    setDeleteList(idList);
+  }, []);
   const handleDeleteDataSensor = useCallback(async () => {
     if (deleteList.length === 0) {
       messageApi.info('NONE selected sensor data!');
@@ -128,6 +130,7 @@ function SensorsHistory() {
           paginationData={pagination}
           handlePageChange={handlePageChange}
           filterData={filters}
+          deleteList={deleteList}
           handleChangeActionFilter={handleChangeActionFilter}
           handleDeleteChange={handleDeleteChange}
           handleDeleteDataSensor={handleDeleteDataSensor}
