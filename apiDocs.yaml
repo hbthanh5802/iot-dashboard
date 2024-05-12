@@ -290,7 +290,7 @@ paths:
         - name: searchValue
           in: query
           required: false
-          description: The value you want to search. If operator is `inRange`, you need to <mark>provide a second value</mark>, one comma after the first one (Example '`12,50`' means **from 12 to 50**')
+          description: The value you want to search.
           schema:
             type: string
             example: '12'
