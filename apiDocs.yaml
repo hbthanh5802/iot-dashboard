@@ -271,6 +271,7 @@ paths:
           description: The direction of the sorting (ASC or DESC).
           schema:
             type: string
+            default: DESC
             enum:
               - ASC
               - DESC
@@ -280,21 +281,12 @@ paths:
           description: The field that you want to search.
           schema:
             type: string
+            default: all
             enum:
               - temperature
               - humidity
               - brightness
-        - name: searchOperator
-          in: query
-          required: false
-          description: The operator of comparison.
-          schema:
-            type: string
-            enum:
-              - equal
-              - greater
-              - less
-              - inRange
+              - all
         - name: searchValue
           in: query
           required: false
