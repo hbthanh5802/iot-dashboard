@@ -16,7 +16,7 @@ function ContactMe() {
       <footer>
         <section id="contact" className="flex">
           <div className="contact__img">
-            <img src={images.avatar3} alt="" />
+            <img src={images.avatar2} alt="" />
           </div>
           <section className="contact__content">
             <ul className="contact__list">
@@ -24,7 +24,7 @@ function ContactMe() {
                 <span className="contact__icon">
                   <i className="fa-brands fa-square-facebook"></i>
                 </span>
-                <a className="contact__link" href="#">
+                <a className="contact__link" href="!#">
                   Hoàng Bá Thanh
                 </a>
                 <div className="contack__underline"></div>
@@ -33,7 +33,7 @@ function ContactMe() {
                 <span className="contact__icon">
                   <i className="fa-solid fa-phone"></i>
                 </span>
-                <a className="contact__link" href="#">
+                <a className="contact__link" href="!#">
                   038.232.1204
                 </a>
                 <div className="contack__underline"></div>
@@ -42,7 +42,7 @@ function ContactMe() {
                 <span className="contact__icon">
                   <i className="fa-solid fa-envelope"></i>
                 </span>
-                <a className="contact__link" href="#">
+                <a className="contact__link" href="!#">
                   hbthanh.582002@gmail.com
                 </a>
                 <div className="contack__underline"></div>

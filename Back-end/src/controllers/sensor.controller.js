@@ -6,14 +6,15 @@ const sensorController = {};
 
 const saveSensorData = async (data) => {
   let response;
-  let { temperatureC, humidity, brightness, sensorId } = data;
+  let { temperatureC, humidity, brightness, dusty, sensorId } = data;
   try {
     if (!sensorId) sensorId = 'S1';
     const payload = {
       sensorId,
-      temperature: temperatureC,
-      humidity,
-      brightness,
+      temperature: (+temperatureC).toFixed(2),
+      humidity: (+humidity).toFixed(2),
+      brightness: +brightness,
+      dusty: +dusty,
     };
     response = await sensorServices.saveSensorData(payload);
     return response;
@@ -108,7 +109,6 @@ sensorController.getDataSensor = async (req, res, next) => {
     pageSize,
     searchField,
     searchValue,
-    searchOperator, // equal, greater, less, inRange
     withSensorRef, // true, false
   } = req.query;
   try {
@@ -125,7 +125,6 @@ sensorController.getDataSensor = async (req, res, next) => {
       pageSize: +pageSize,
       searchField,
       searchValue: searchValue,
-      searchOperator,
       withSensorRef,
     };
     response = await sensorServices.fetchSensorDataByCriteria(payload);
@@ -157,23 +156,10 @@ let _socket;
 
 io.on('connection', (socket) => {
   console.log('Client is connected');
-
   _socket = socket;
-  // const sendMessage = setInterval(() => {
-  //   io.emit(
-  //     'sensorData',
-  //     JSON.stringify({
-  //       temperature: (Math.random() * 100 + 1).toFixed(2),
-  //       humidity: (Math.random() * 100 + 1).toFixed(2),
-  //       brightness: (Math.random() * 1023 + 1).toFixed(2),
-  //       createdAt: new Date().toISOString(),
-  //     })
-  //   );
-  // }, 5000);
 
   socket.on('disconnect', () => {
     console.log('Client is disconnected');
-    // clearInterval(sendMessage);
   });
 });
 

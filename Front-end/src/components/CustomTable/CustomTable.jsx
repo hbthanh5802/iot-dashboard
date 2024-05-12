@@ -29,9 +29,6 @@ import { MdDeleteForever } from 'react-icons/md';
 import { LuRefreshCw } from 'react-icons/lu';
 import { FaArrowRight } from 'react-icons/fa6';
 import { RiToolsFill } from 'react-icons/ri';
-import { FaEquals } from 'react-icons/fa6';
-import { FaGreaterThanEqual } from 'react-icons/fa6';
-import { FaLessThanEqual } from 'react-icons/fa6';
 import moment from 'moment';
 
 import './CustomTable.scss';
@@ -145,39 +142,39 @@ const actionFilterOption = [
   },
 ];
 
-const searchOperatorOptions = [
-  {
-    label: (
-      <>
-        <span style={{ paddingRight: 10 }}>Equal to</span>
-        <Tag color="green">{<FaEquals />}</Tag>
-      </>
-    ),
-    value: 'equal',
-  },
-  {
-    label: (
-      <>
-        <span style={{ paddingRight: 10 }}>Greater or equal</span>
-        <Tag color="green">{<FaGreaterThanEqual />}</Tag>
-      </>
-    ),
-    value: 'greater',
-  },
-  {
-    label: (
-      <>
-        <span style={{ paddingRight: 10 }}>Less or equal</span>
-        <Tag color="green">{<FaLessThanEqual />}</Tag>
-      </>
-    ),
-    value: 'less',
-  },
-  {
-    label: 'In range',
-    value: 'inRange',
-  },
-];
+// const searchOperatorOptions = [
+//   {
+//     label: (
+//       <>
+//         <span style={{ paddingRight: 10 }}>Equal to</span>
+//         <Tag color="green">{<FaEquals />}</Tag>
+//       </>
+//     ),
+//     value: 'equal',
+//   },
+//   {
+//     label: (
+//       <>
+//         <span style={{ paddingRight: 10 }}>Greater or equal</span>
+//         <Tag color="green">{<FaGreaterThanEqual />}</Tag>
+//       </>
+//     ),
+//     value: 'greater',
+//   },
+//   {
+//     label: (
+//       <>
+//         <span style={{ paddingRight: 10 }}>Less or equal</span>
+//         <Tag color="green">{<FaLessThanEqual />}</Tag>
+//       </>
+//     ),
+//     value: 'less',
+//   },
+//   {
+//     label: 'In range',
+//     value: 'inRange',
+//   },
+// ];
 
 function CustomTable({
   data,
@@ -188,7 +185,6 @@ function CustomTable({
   loading,
   filterData,
   searchData,
-  deleteList,
   handleSearchChange,
   ...otherProps
 }) {
@@ -275,7 +271,7 @@ function CustomTable({
   // Checkbox selection
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log(selectedRows);
+      console.log('rowSelection', selectedRows);
       otherProps?.handleDeleteChange(selectedRows.map((selectedItem) => selectedItem?.id));
       setSelectedData(selectedRows.length > 0 ? selectedRows : data);
     },
@@ -320,27 +316,14 @@ function CustomTable({
 
     // Search condition
     let searchCondition = {};
-    if (searchData) {
-      const { searchField, searchOperator, searchValue } = searchData;
-      const [fromValue, toValue] = searchValue?.split(',');
-      if (searchField && searchOperator && fromValue) {
-        searchCondition = { searchField, searchOperator };
-        if (searchOperator === 'inRange' && toValue) {
-          if (+fromValue < +toValue) {
-            searchCondition.searchValue = searchValue;
-          } else {
-            messageApi.warning('FROM VALUE cannot greater than TO VALUE.');
-          }
-        } else if (searchOperator === 'inRange' && !toValue) {
-          searchCondition = {};
-        } else {
-          searchCondition.searchValue = fromValue;
-        }
-      } else {
-        delete originalFilterData.searchOperator;
-        delete originalFilterData.searchValue;
-        delete originalFilterData.searchField;
-      }
+    if (searchData && searchData.searchValue) {
+      let { searchField, searchValue } = searchData;
+      if (!searchField) searchField = 'all';
+      searchCondition = { searchField, searchValue };
+    } else {
+      delete originalFilterData.searchOperator;
+      delete originalFilterData.searchValue;
+      delete originalFilterData.searchField;
     }
 
     handlePageChange({
@@ -408,7 +391,6 @@ function CustomTable({
                       <Tooltip title="Field to search" placement="bottomLeft">
                         <>
                           <Select
-                            defaultValue={'all'}
                             allowClear
                             placeholder="Select a field"
                             style={{
@@ -419,7 +401,7 @@ function CustomTable({
                           />
                         </>
                       </Tooltip>
-                      <Tooltip title="Compare operator" placement="bottomLeft">
+                      {/* <Tooltip title="Compare operator" placement="bottomLeft">
                         <>
                           <Select
                             defaultValue={'equal'}
@@ -432,7 +414,7 @@ function CustomTable({
                             onChange={(value) => handleSearchChange({ ...searchData, searchOperator: value })}
                           />
                         </>
-                      </Tooltip>
+                      </Tooltip> */}
                       <Tooltip
                         title={searchData.searchOperator === 'inRange' ? 'From Value' : 'Value to search'}
                         placement="bottomLeft"
@@ -537,7 +519,6 @@ function CustomTable({
       </div>
     );
   };
-
   // Prepare export data
   useEffect(() => {
     const header = ['STT'].concat(
@@ -563,7 +544,6 @@ function CustomTable({
       return row;
     });
 
-    // console.table(header);
     setTableData({ header, body });
   }, [filteredColumns, selectedData, checkedColumnList]);
 
@@ -574,16 +554,12 @@ function CustomTable({
 
   useEffect(() => {
     const autoRefreshTimer = setInterval(() => {
-      handlePageChange({
-        ...filterData,
-        refresh: Math.random() * 100,
-      });
+      handlePageChange({ ...filterData, refresh: Math.random() * 100 });
     }, 5000);
 
     return () => {
       clearInterval(autoRefreshTimer);
     };
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(filterData)]);
 
@@ -643,7 +619,7 @@ function CustomTable({
           <>
             <FloatButton.Group
               trigger="hover"
-              open={!!deleteList?.length}
+              open={!!otherProps?.deleteList?.length}
               type="primary"
               style={{
                 right: 24,

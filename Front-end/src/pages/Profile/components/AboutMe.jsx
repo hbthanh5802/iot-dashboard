@@ -14,7 +14,7 @@ function AboutMe() {
           className="aboutMe__avatar"
           style={{
             flex: 1,
-            backgroundImage: `url(${images.avatar3})`,
+            backgroundImage: `url(${images.avatar2})`,
           }}
         ></div>
         <div

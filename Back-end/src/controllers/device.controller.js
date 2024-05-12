@@ -95,9 +95,9 @@ deviceController.updateDeviceStatus = async (req, res, next) => {
     }
     response = await deviceServices.updateDeviceStatus(payload);
     if (response.statusCode === 200) {
-      if (deviceId.includes(['D1'])) {
+      if (deviceId === 'D2') {
         publishMessage(`esp8266/device/fan`, { action: action ? 'ON' : 'OFF' });
-      } else if (deviceId.includes(['D2'])) {
+      } else if (deviceId === 'D3') {
         publishMessage(`esp8266/device/light`, {
           action: action ? 'ON' : 'OFF',
         });

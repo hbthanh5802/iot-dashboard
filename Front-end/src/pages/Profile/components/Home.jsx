@@ -60,8 +60,8 @@ function Home() {
             </clipPath>
             <image
               clipPath="url(#clip-path)"
-              xlinkHref={images.avatar}
-              src={images.avatar}
+              xlinkHref={images.avatar2}
+              src={images.avatar2}
               alt="Image"
               height="500"
               width="500"

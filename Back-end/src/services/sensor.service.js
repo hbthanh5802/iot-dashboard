@@ -91,19 +91,14 @@ sensorServices.fetchSensor = async (payload) => {
 };
 
 sensorServices.saveSensorData = async (payload) => {
-  const { sensorId, temperature, humidity, brightness } = payload;
+  const { sensorId, temperature, humidity, brightness, dusty } = payload;
   const response = {
     statusCode: 201,
     message: 'Succeed to save data sensor',
     data: {},
   };
   try {
-    const requirements = {
-      sensorId,
-      temperature: (+temperature).toFixed(2),
-      humidity: (+humidity).toFixed(2),
-      brightness,
-    };
+    const requirements = { sensorId, temperature, humidity, brightness, dusty };
     const sensor = await SensorModel.findByPk(sensorId);
     if (sensor) {
       const dataSensor = await sensor.createDataSensor(requirements);
@@ -172,36 +167,18 @@ sensorServices.fetchSensorDataByCriteria = async (payload) => {
         };
       }
       // SEARCH CONDITION
-      if (
-        searchCriteria.searchField &&
-        searchCriteria.searchValue &&
-        searchCriteria.searchOperator
-      ) {
-        const field = searchCriteria.searchField;
-        const operator = searchCriteria.searchOperator;
-        const value = searchCriteria.searchValue;
-        if (field === 'all') {
+      const field = searchCriteria.searchField;
+      const value = searchCriteria.searchValue;
+      if (value) {
+        // const operator = searchCriteria.searchOperator;
+        if (!field || field === 'all') {
           const fieldColumns = ['temperature', 'humidity', 'brightness'];
           whereCondition = {
             ...whereCondition,
             [Op.or]: fieldColumns.map((item) => ({ [item]: value[0] })),
           };
         } else {
-          if (operator === 'equal') {
-            whereCondition[field] = value[0];
-          } else if (operator === 'greater') {
-            whereCondition[field] = {
-              [Op.gte]: value[0],
-            };
-          } else if (operator === 'less') {
-            whereCondition[field] = {
-              [Op.lte]: value[0],
-            };
-          } else if (operator === 'inRange') {
-            whereCondition[field] = {
-              [Op.between]: value,
-            };
-          }
+          whereCondition[field] = value[0];
         }
       }
       // ORDER CONDITION
@@ -209,6 +186,7 @@ sensorServices.fetchSensorDataByCriteria = async (payload) => {
         const direction = searchCriteria.direction.toString().toUpperCase();
         orderCondition.push([`${searchCriteria.orderBy}`, `${direction}`]);
       }
+      //
       if (
         Object.keys(whereCondition).length !== 0 ||
         searchCriteria.searchField === 'all'
