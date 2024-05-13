@@ -10,7 +10,7 @@ function Home() {
           A versatile web developer skilled in both frontend and backend, with a touch of devops expertise.
         </p>
         <button className="btn_greeting">
-          <a href="#">GET MORE</a>
+          <a href="!#">GET MORE</a>
         </button>
       </div>
       <div className="blob relative">

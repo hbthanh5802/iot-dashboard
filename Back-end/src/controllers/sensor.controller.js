@@ -158,8 +158,21 @@ io.on('connection', (socket) => {
   console.log('Client is connected');
   _socket = socket;
 
+  // const sendDataTimer = setInterval(() => {
+  //   _socket?.emit(
+  //     'sensorData',
+  //     JSON.stringify({
+  //       temperature: (Math.random() * 100 + 1).toFixed(2),
+  //       humidity: (Math.random() * 100 + 1).toFixed(2),
+  //       brightness: (Math.random() * 1023 + 1).toFixed(2),
+  //       createdAt: new Date().toISOString(),
+  //     })
+  //   );
+  // }, 5000);
+
   socket.on('disconnect', () => {
     console.log('Client is disconnected');
+    // clearInterval(sendDataTimer);
   });
 });
 

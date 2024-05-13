@@ -148,10 +148,15 @@ deviceServices.fetchDataActionByCriteria = async (payload) => {
       let whereCondition = {};
       let orderCondition = [];
       // WHERE condition
-      if (searchCriteria.deviceId) {
-        whereCondition.deviceId = {
-          [Op.eq]: searchCriteria.deviceId,
-        };
+      const deviceIdList = searchCriteria.deviceId;
+      if (deviceIdList) {
+        Array.isArray(deviceIdList)
+          ? (whereCondition.deviceId = {
+              [Op.in]: deviceIdList,
+            })
+          : (whereCondition.deviceId = {
+              [Op.eq]: deviceIdList,
+            });
       }
       // Date
       if (searchCriteria.startDate && searchCriteria.endDate) {

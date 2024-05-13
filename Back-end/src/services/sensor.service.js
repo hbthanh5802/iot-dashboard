@@ -139,10 +139,15 @@ sensorServices.fetchSensorDataByCriteria = async (payload) => {
       let whereCondition = {};
       let orderCondition = [];
       // WHERE condition
-      if (searchCriteria.sensorId) {
-        whereCondition.sensorId = {
-          [Op.substring]: searchCriteria.sensorId,
-        };
+      const sensorIdList = searchCriteria.sensorId;
+      if (sensorIdList) {
+        Array.isArray(sensorIdList)
+          ? (whereCondition.sensorId = {
+              [Op.in]: sensorIdList,
+            })
+          : (whereCondition.sensorId = {
+              [Op.eq]: sensorIdList,
+            });
       }
       // console.log('Date', searchCriteria.startDate, searchCriteria.endDate);
       // console.log(
@@ -167,18 +172,17 @@ sensorServices.fetchSensorDataByCriteria = async (payload) => {
         };
       }
       // SEARCH CONDITION
-      const field = searchCriteria.searchField;
-      const value = searchCriteria.searchValue;
-      if (value) {
-        // const operator = searchCriteria.searchOperator;
-        if (!field || field === 'all') {
+      const searchField = searchCriteria.searchField;
+      const searchValue = searchCriteria.searchValue;
+      if (searchValue) {
+        if (!searchField || searchField === 'all') {
           const fieldColumns = ['temperature', 'humidity', 'brightness'];
           whereCondition = {
             ...whereCondition,
-            [Op.or]: fieldColumns.map((item) => ({ [item]: value[0] })),
+            [Op.or]: fieldColumns.map((item) => ({ [item]: searchValue })),
           };
         } else {
-          whereCondition[field] = value[0];
+          whereCondition[searchField] = searchValue;
         }
       }
       // ORDER CONDITION

@@ -23,9 +23,9 @@ const cx = classNames.bind(styles);
 
 function WidgetBar({ socketClient }) {
   const { dark } = useContext(ThemeContext);
-  const [temperature, setTemperature] = useState(99);
-  const [humidity, setMoisture] = useState(99);
-  const [brightness, setBrightness] = useState(999);
+  const [temperature, setTemperature] = useState(0);
+  const [humidity, setMoisture] = useState(0);
+  const [brightness, setBrightness] = useState(0);
 
   useEffect(() => {
     // const socket = socketIOClient(ENDPOINT, { transports: ['websocket', 'polling', 'flashsocket'] });

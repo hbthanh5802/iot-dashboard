@@ -142,40 +142,6 @@ const actionFilterOption = [
   },
 ];
 
-// const searchOperatorOptions = [
-//   {
-//     label: (
-//       <>
-//         <span style={{ paddingRight: 10 }}>Equal to</span>
-//         <Tag color="green">{<FaEquals />}</Tag>
-//       </>
-//     ),
-//     value: 'equal',
-//   },
-//   {
-//     label: (
-//       <>
-//         <span style={{ paddingRight: 10 }}>Greater or equal</span>
-//         <Tag color="green">{<FaGreaterThanEqual />}</Tag>
-//       </>
-//     ),
-//     value: 'greater',
-//   },
-//   {
-//     label: (
-//       <>
-//         <span style={{ paddingRight: 10 }}>Less or equal</span>
-//         <Tag color="green">{<FaLessThanEqual />}</Tag>
-//       </>
-//     ),
-//     value: 'less',
-//   },
-//   {
-//     label: 'In range',
-//     value: 'inRange',
-//   },
-// ];
-
 function CustomTable({
   data,
   columns,
@@ -321,7 +287,6 @@ function CustomTable({
       if (!searchField) searchField = 'all';
       searchCondition = { searchField, searchValue };
     } else {
-      delete originalFilterData.searchOperator;
       delete originalFilterData.searchValue;
       delete originalFilterData.searchField;
     }
@@ -401,62 +366,18 @@ function CustomTable({
                           />
                         </>
                       </Tooltip>
-                      {/* <Tooltip title="Compare operator" placement="bottomLeft">
-                        <>
-                          <Select
-                            defaultValue={'equal'}
-                            // allowClear
-                            placeholder="Select a operator"
-                            style={{
-                              width: 200,
-                            }}
-                            options={searchOperatorOptions}
-                            onChange={(value) => handleSearchChange({ ...searchData, searchOperator: value })}
-                          />
-                        </>
-                      </Tooltip> */}
-                      <Tooltip
-                        title={searchData.searchOperator === 'inRange' ? 'From Value' : 'Value to search'}
-                        placement="bottomLeft"
-                      >
+                      <Tooltip title={'Value to search'} placement="bottomLeft">
                         <>
                           <InputNumber
                             style={{ width: 120 }}
-                            placeholder={searchData.searchOperator === 'inRange' ? 'From Value' : '00.00'}
+                            placeholder={'00.00'}
                             onChange={(value) => {
-                              let searchValue = searchData.searchValue?.split(',');
-                              if (!value) {
-                                searchValue = [];
-                              } else {
-                                searchValue[0] = value;
-                              }
-                              handleSearchChange({ ...searchData, searchValue: searchValue.join(',') });
+                              handleSearchChange({ ...searchData, searchValue: value });
                             }}
                             type="number"
                           />
                         </>
                       </Tooltip>
-                      {searchData.searchOperator === 'inRange' && (
-                        <Tooltip
-                          title={searchData.searchOperator === 'inRange' ? 'To Value' : 'Value to search'}
-                          placement="bottomLeft"
-                        >
-                          <>
-                            <InputNumber
-                              disabled={!searchData.searchValue?.split(',')[0]?.trim()}
-                              style={{ width: 120 }}
-                              placeholder="To Value"
-                              onChange={(value) => {
-                                const searchValue = searchData.searchValue?.split(',')[0];
-                                handleSearchChange({
-                                  ...searchData,
-                                  searchValue: `${searchValue}${value ? ',' + value : ''}`,
-                                });
-                              }}
-                            />
-                          </>
-                        </Tooltip>
-                      )}
                     </Space.Compact>
                   </>
                 </Space>
@@ -594,23 +515,43 @@ function CustomTable({
             }}
             scroll={{ y: 480 }}
             onChange={(pagination, filters, sorter, extra) => {
+              const currentFiltersData = filterData;
               // console.group('Table Changed');
               // console.log('pagination', pagination);
               // console.log('sorter', sorter);
+              // console.log('filters', filters);
               // console.groupEnd('Table Changed');
+
+              const tableFilterCondition = {};
+              if (filters) {
+                const allFilterValues = Object.values(filters);
+
+                allFilterValues?.forEach((filterValues) => {
+                  filterValues?.forEach((value) => {
+                    const { filterName, filterValue } = JSON.parse(value);
+                    if (!tableFilterCondition[filterName]) tableFilterCondition[filterName] = [];
+                    tableFilterCondition[filterName]?.push(filterValue);
+                  });
+                });
+                // console.log('filterCondition', filterCondition);
+              }
 
               if (sorter.order && sorter.column) {
                 setOrderFilter({
                   orderBy: sorter.columnKey,
                   direction: sorter.order === 'ascend' ? 'ASC' : 'DESC',
                 });
-                // handleSearchBtnClick();
               } else {
                 setOrderFilter({});
               }
 
+              if (Object.keys(tableFilterCondition).length === 0) {
+                delete currentFiltersData.deviceId;
+              }
+
               handlePageChange({
-                ...filterData,
+                ...currentFiltersData,
+                ...tableFilterCondition,
                 page: pagination.current,
                 pageSize: pagination.pageSize,
               });
@@ -628,7 +569,6 @@ function CustomTable({
               tooltip="Tools"
             >
               <FloatButton
-                className="test"
                 icon={<MdDeleteForever className="ctTable-float-delete-btn" />}
                 tooltip={'Delete'}
                 onClick={otherProps?.handleDeleteDataSensor}

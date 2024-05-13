@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import classNames from 'classnames/bind';
 
 import { message } from 'antd';
@@ -11,40 +11,10 @@ import { Tag } from 'antd';
 
 const cx = classNames.bind(styles);
 
-const columns = [
-  {
-    key: 'id',
-    title: 'STT',
-    dataIndex: 'id',
-    width: '100px',
-  },
-  {
-    key: 'action',
-    title: 'Action',
-    dataIndex: 'action',
-    render: (_, { action }) => <>{<Tag color={action === 'ON' ? 'green' : 'red'}>{action}</Tag>}</>,
-  },
-  {
-    key: 'createdAt',
-    title: 'Created At',
-    dataIndex: 'createdAt',
-    sorter: true,
-  },
-  {
-    key: 'deviceName',
-    title: 'Device Name',
-    dataIndex: 'deviceName',
-  },
-  // {
-  //   key: 'deviceId',
-  //   title: 'DeviceID',
-  //   dataIndex: 'deviceId',
-  // },
-];
-
 function SensorsHistory() {
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState(false);
+  const [deviceList, setDeviceList] = useState([]);
   const [actionData, setActionData] = useState([]);
   const [pagination, setPagination] = useState({});
   const [filters, setFilters] = useState({
@@ -92,6 +62,21 @@ function SensorsHistory() {
   }, [deleteList, messageApi]);
 
   useEffect(() => {
+    deviceServices
+      .getAllDevices({})
+      .then((response) => {
+        console.log('response', response);
+        if (response.data) setDeviceList(response.data);
+      })
+      .catch((error) => {
+        console.log('Failed to get all devices');
+        console.log(error);
+      });
+  }, []);
+
+  // console.log('filters', filters);
+
+  useEffect(() => {
     const fetchSensorData = async () => {
       let response;
       try {
@@ -115,8 +100,51 @@ function SensorsHistory() {
   }, [JSON.stringify(filters)]);
 
   const handlePageChange = useCallback((currentPage) => {
+    // console.log('currentPage', currentPage);
     setFilters({ ...currentPage });
   }, []);
+
+  const deviceFilter = useMemo(() => {
+    return deviceList.map((device) => ({
+      text: device?.name,
+      value: JSON.stringify({
+        filterName: 'deviceId',
+        filterValue: device.id,
+      }),
+    }));
+  }, [deviceList]);
+
+  const columns = [
+    {
+      key: 'id',
+      title: 'STT',
+      dataIndex: 'id',
+      width: '100px',
+    },
+    {
+      key: 'action',
+      title: 'Action',
+      dataIndex: 'action',
+      render: (_, { action }) => <>{<Tag color={action === 'ON' ? 'green' : 'red'}>{action}</Tag>}</>,
+    },
+    {
+      key: 'createdAt',
+      title: 'Created At',
+      dataIndex: 'createdAt',
+      sorter: true,
+    },
+    {
+      key: 'deviceName',
+      title: 'Device Name',
+      dataIndex: 'deviceName',
+      filters: deviceFilter,
+    },
+    // {
+    //   key: 'deviceId',
+    //   title: 'DeviceID',
+    //   dataIndex: 'deviceId',
+    // },
+  ];
 
   return (
     <>

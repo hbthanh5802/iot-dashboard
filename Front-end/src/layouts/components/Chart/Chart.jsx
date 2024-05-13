@@ -33,67 +33,13 @@ function Chart({ socketClient }) {
     return slideData && slideData === 'false' ? false : true;
   });
 
-  const [chartData, setChartData] = useState({
-    labels: chartLabel,
-    datasets: [
-      {
-        fill: true,
-        label: 'Temperature',
-        data: currentData.length > 0 ? currentData?.map((dataItem) => dataItem.temperature) : [],
-        borderColor: 'rgb(255, 99, 132)',
-        backgroundColor: 'rgba(255, 99, 132, 0.5)',
-      },
-      {
-        fill: true,
-        label: 'humidity',
-        data: currentData.length > 0 ? currentData?.map((dataItem) => dataItem.humidity) : [],
-        borderColor: 'rgb(53, 162, 235)',
-        backgroundColor: 'rgba(53, 162, 235, 0.5)',
-      },
-      {
-        fill: false,
-        label: 'Brightness',
-        data: currentData.length > 0 ? currentData?.map((dataItem) => dataItem.brightness) : [],
-        borderColor: 'rgb(242, 166, 84)',
-        backgroundColor: 'rgba(242, 166, 84, 0.5)',
-      },
-    ],
-  });
-
-  useEffect(() => {
-    const dataset = {
-      labels: chartLabel,
-      datasets: [
-        {
-          fill: true,
-          label: 'Temperature',
-          data: currentData.length > 0 ? currentData?.map((dataItem) => +dataItem.temperature) : [],
-          borderColor: 'rgb(255, 99, 132)',
-          backgroundColor: 'rgba(255, 99, 132, 0.5)',
-        },
-        {
-          fill: true,
-          label: 'Moisture',
-          data: currentData.length > 0 ? currentData?.map((dataItem) => +dataItem.humidity) : [],
-          borderColor: 'rgb(53, 162, 235)',
-          backgroundColor: 'rgba(53, 162, 235, 0.5)',
-        },
-        {
-          fill: false,
-          label: 'Brightness',
-          data: currentData.length > 0 ? currentData?.map((dataItem) => +dataItem.brightness) : [],
-          borderColor: 'rgb(242, 166, 84)',
-          backgroundColor: 'rgba(242, 166, 84, 0.5)',
-        },
-      ],
-    };
-    setChartData(dataset);
-  }, [chartLabel, currentData]);
-
-  // console.log('data', chartData);
-
   const options = {
     responsive: true,
+    interaction: {
+      mode: 'index',
+      intersect: false,
+    },
+    stacked: false,
     plugins: {
       legend: {
         position: 'top',
@@ -103,7 +49,88 @@ function Chart({ socketClient }) {
         text: 'MCU ESP8266',
       },
     },
+    // multiple axis
+    scales: {
+      y1: {
+        type: 'linear',
+        display: true,
+        position: 'left',
+      },
+      y2: {
+        type: 'linear',
+        display: true,
+        position: 'right',
+        grid: {
+          drawOnChartArea: true,
+        },
+      },
+    },
   };
+
+  const [chartData, setChartData] = useState({
+    labels: chartLabel,
+    datasets: [
+      {
+        fill: false,
+        label: 'Temperature',
+        data: currentData.length > 0 ? currentData?.map((dataItem) => dataItem.temperature) : [],
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        yAxisID: 'y2',
+      },
+      {
+        fill: false,
+        label: 'humidity',
+        data: currentData.length > 0 ? currentData?.map((dataItem) => dataItem.humidity) : [],
+        borderColor: 'rgb(53, 162, 235)',
+        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+        yAxisID: 'y2',
+      },
+      {
+        fill: false,
+        label: 'Brightness',
+        data: currentData.length > 0 ? currentData?.map((dataItem) => dataItem.brightness) : [],
+        borderColor: 'rgb(242, 166, 84)',
+        backgroundColor: 'rgba(242, 166, 84, 0.5)',
+        yAxisID: 'y1',
+      },
+    ],
+  });
+
+  useEffect(() => {
+    const dataset = {
+      labels: chartLabel,
+      datasets: [
+        {
+          fill: false,
+          label: 'Temperature',
+          data: currentData.length > 0 ? currentData?.map((dataItem) => +dataItem.temperature) : [],
+          borderColor: 'rgb(255, 99, 132)',
+          backgroundColor: 'rgba(255, 99, 132, 0.5)',
+          yAxisID: 'y2',
+        },
+        {
+          fill: false,
+          label: 'Moisture',
+          data: currentData.length > 0 ? currentData?.map((dataItem) => +dataItem.humidity) : [],
+          borderColor: 'rgb(53, 162, 235)',
+          backgroundColor: 'rgba(53, 162, 235, 0.5)',
+          yAxisID: 'y2',
+        },
+        {
+          fill: false,
+          label: 'Brightness',
+          data: currentData.length > 0 ? currentData?.map((dataItem) => +dataItem.brightness) : [],
+          borderColor: 'rgb(242, 166, 84)',
+          backgroundColor: 'rgba(242, 166, 84, 0.5)',
+          yAxisID: 'y1',
+        },
+      ],
+    };
+    setChartData(dataset);
+  }, [chartLabel, currentData]);
+
+  // console.log('data', chartData);
 
   useEffect(() => {
     const slideData = localStorage.getItem('isSlideData') || false;
